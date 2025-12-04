@@ -1,0 +1,506 @@
+/* ==========================================================================
+   RESET & BASE STYLES
+   ========================================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.6;
+  color: #2d3748;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 70%, #f5576c 100%);
+  min-height: 100vh;
+  display: flex;
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   SIDEBAR
+   ========================================================================== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px;
+  box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-weight: 600;
+}
+
+.sidebar .logo {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+  text-align: center;
+  user-select: none;
+  color: #ffd23f;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-grow: 1;
+}
+
+.admin-nav a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: 17px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.admin-nav a i {
+  font-size: 20px;
+  width: 24px;
+  text-align: center;
+}
+
+.admin-nav a:hover,
+.admin-nav a.active {
+  background: rgba(255, 210, 63, 0.85);
+  color: #2d3748;
+  font-weight: 700;
+}
+
+/* Logout Button */
+.logout-btn {
+  margin-top: auto;
+  background: #ff6b6b;
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logout-btn i {
+  font-size: 18px;
+}
+
+.logout-btn:hover {
+  background: #f44336;
+  box-shadow: 0 8px 20px rgba(244, 67, 54, 0.5);
+}
+
+/* ==========================================================================
+   MAIN CONTENT
+   ========================================================================== */
+.main-content {
+  margin-left: 260px;
+  padding: 40px 40px 80px;
+  flex: 1;
+  background: #f8fafc;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Headers */
+.header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #2d3748;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   STATS SECTION
+   ========================================================================== */
+.stats-section h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #4a5568;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.stat-card {
+  background: white;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+  padding: 32px 24px;
+  border-radius: 20px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card h4 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #667eea;
+}
+
+.stat-card p {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #2d3748;
+}
+
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.25);
+}
+
+.note {
+  margin-top: 20px;
+  font-style: italic;
+  color: #a0aec0;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   COURS SECTION
+   ========================================================================== */
+.cours-section h2,
+.explore-section h2,
+.account-section h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 24px;
+}
+
+.cours-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.cours-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.cours-card h4 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 12px;
+}
+
+.cours-card p {
+  font-size: 1rem;
+  color: #4a5568;
+  flex-grow: 1;
+  margin-bottom: 20px;
+}
+
+.view-btn,
+.enroll-btn,
+.edit-btn,
+.search-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 36px;
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 12px 28px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.view-btn i,
+.enroll-btn i,
+.edit-btn i,
+.search-btn i {
+  font-size: 16px;
+}
+
+.view-btn:hover,
+.enroll-btn:hover,
+.edit-btn:hover {
+  background: linear-gradient(135deg, #764ba2, #667eea);
+  transform: translateY(-3px);
+}
+
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 36px;
+  border: 2px solid #cbd5e1;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.search-bar input[type="text"]:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 7px rgba(102, 126, 234, 0.3);
+}
+
+/* ==========================================================================
+   ACCOUNT SECTION
+   ========================================================================== */
+.account-section p {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.edit-btn {
+  margin-top: 20px;
+}
+
+/* ==========================================================================
+   TAB CONTENT
+   ========================================================================== */
+.tab-content {
+  animation: fadeInContent 0.5s ease forwards;
+  opacity: 0;
+}
+
+.tab-content.ng-star-inserted {
+  opacity: 1;
+}
+
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+    padding: 25px 15px;
+  }
+  .main-content {
+    margin-left: 220px;
+    padding: 30px 30px 70px;
+  }
+  .cours-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    padding: 12px 20px;
+    box-shadow: none;
+    justify-content: space-around;
+  }
+  .sidebar .logo {
+    font-size: 20px;
+    margin-bottom: 0;
+    color: #ffd23f;
+  }
+  .admin-nav {
+    flex-direction: row;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+  }
+  .admin-nav a {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  .logout-btn {
+    display: none;
+  }
+  .main-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cours-grid {
+    grid-template-columns: 1fr;
+  }
+  .search-bar {
+    flex-direction: column;
+  }
+  .search-bar input[type="text"],
+  .search-bar button {
+    width: 100%;
+  }
+}
+/* AJOUTS pour le nouveau HTML */
+.logo-highlight { color: #ffd23f; }
+.header-subtitle { 
+    color: #64748b; 
+    font-size: 16px; 
+    margin-bottom: 32px; 
+}
+.stat-icon { 
+    width: 60px; 
+    height: 60px; 
+    background: linear-gradient(135deg, #667eea, #764ba2); 
+    border-radius: 16px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    margin: 0 auto 16px; 
+    font-size: 24px; 
+    color: white; 
+}
+.stat-number { font-size: 2.5rem !important; }
+.stat-change { 
+    display: block; 
+    font-size: 14px; 
+    font-weight: 500; 
+}
+.stat-change.positive { color: #48bb78; }
+.cours-header { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    margin-bottom: 12px; 
+}
+.cours-header i { 
+    font-size: 32px; 
+    color: #667eea; 
+    flex-shrink: 0; 
+}
+.cours-progress { margin-bottom: 20px; }
+.progress-bar { 
+    height: 8px; 
+    background: #e2e8f0; 
+    border-radius: 4px; 
+    overflow: hidden; 
+    margin-bottom: 8px; 
+}
+.progress-fill { 
+    height: 100%; 
+    background: linear-gradient(90deg, #48bb78, #38a169); 
+    transition: width 0.5s ease; 
+    border-radius: 4px; 
+}
+.featured-badge { 
+    position: absolute; 
+    top: 16px; 
+    right: 16px; 
+    background: #48bb78; 
+    color: white; 
+    padding: 6px 12px; 
+    border-radius: 20px; 
+    font-size: 12px; 
+    font-weight: 700; 
+}
+.cours-card.featured { position: relative; }
+.cours-meta { 
+    display: flex; 
+    gap: 16px; 
+    margin-bottom: 20px; 
+    font-size: 14px; 
+    color: #64748b; 
+}
+.cours-meta i { margin-right: 4px; }
+.account-avatar { 
+    width: 120px; 
+    height: 120px; 
+    background: linear-gradient(135deg, #667eea, #764ba2); 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 48px; 
+    color: white; 
+    margin: 0 auto 24px; 
+}
+.account-info h3 { 
+    text-align: center; 
+    font-size: 28px; 
+    margin-bottom: 8px; 
+}
+.account-email { 
+    text-align: center; 
+    color: #64748b; 
+    font-size: 18px; 
+}
+.detail-row { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 16px 0; 
+    border-bottom: 1px solid #e2e8f0; 
+}
+.detail-row:last-child { border-bottom: none; }
+.account-actions { 
+    display: flex; 
+    gap: 16px; 
+    flex-wrap: wrap; 
+    margin-top: 32px; 
+}
+.password-btn { 
+    background: linear-gradient(135deg, #ed8936, #dd6b20); 
+}
+.search-input { 
+    position: relative; 
+    flex: 1; 
+}
+.search-input i { 
+    position: absolute; 
+    left: 20px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    color: #94a3b8; 
+    z-index: 1; 
+}
+.search-input input { 
+    padding-left: 48px; 
+}
