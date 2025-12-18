@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion -Professeur LMS</title>
+    <link rel="stylesheet" href="/stylesheets/login.css">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Connectez-vous à votre compte</h2>
+        <p class="subtitle">Rejoignez notre plateforme LMS</p>
+        
+        <div id="error-container"></div>
+
+        <form id="plogin" action="/professeur/plogin" method="post">
+            <div class="input-group">
+                <input type="email" id="email" name="email" required>
+                <label for="email">Email</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="password" name="password" required minlength="8">
+                <label for="password">Mot de passe</label>
+            </div>
+
+            <button type="submit" class="btn">Se connecter</button>
+        </form>
+
+        <div class="login-link">
+            Vous êtes nouveau ? <a href="/professeur/pregister">Inscrivez-vous</a>
+        </div>
+    </div>
+</body>
+<script>
+    // Récupère le paramètre 'error' dans l'URL 
+    const error = new URLSearchParams(window.location.search).get('error');
+    // Si un paramètre error existe dans l'URL
+    if (error) {
+        // Définition des messages d'erreur selon la valeur de 'error'
+        const messages = {
+            server_error: "Erreur serveur, réessayez plus tard.",
+            email_not_found: "Email ou mot de passe incorrect.",
+            invalid_password: "Email ou mot de passe incorrect."
+        };
+        // Sélection de la div qui contiendra le message d'erreur dans la page
+        const container = document.getElementById('error-container');
+
+        // Injection dynamique du message d'erreur dans cette div
+        container.innerHTML = `<div id="error-message">${messages[error] || "Erreur inconnue."}</div>`;
+    }
+</script>
+</html>

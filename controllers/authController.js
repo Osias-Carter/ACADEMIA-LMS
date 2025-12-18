@@ -5,230 +5,191 @@ const db = require("../config/db");
 
 // Afficher les formulaires
 module.exports.showRegister = (req, res) => {
-  res.sendFile(path.join(__dirname, "../views/register.html"));
+    res.sendFile(path.join(__dirname, "../views/user/register.html"));
 };
+
 module.exports.showPregister = (req, res) => {
-  res.sendFile(path.join(__dirname, "../views/pregister.html"));
+    res.sendFile(path.join(__dirname, "../views/professeur/pregister.html"));
 };
+
 module.exports.showLogin = (req, res) => {
-  res.sendFile(path.join(__dirname, "../views/login.html"));
+    res.sendFile(path.join(__dirname, "../views/user/login.html"));
 };
+
 module.exports.showPlogin = (req, res) => {
-  res.sendFile(path.join(__dirname, "../views/plogin.html"));
+    res.sendFile(path.join(__dirname, "../views/professeur/plogin.html"));
 };
+
 module.exports.showDashboard = (req, res) => {
-  res.sendFile(path.join(__dirname, "../views/dashboard.html"));
+    res.sendFile(path.join(__dirname, "../views/dashboard.html"));
 };
 
-// UTILS
-function getUserIdField(user) {
-  // Retourne la propriété id correcte quel que soit le nom de la colonne
-  return user.id ?? user.id_user ?? user.ID ?? user.Id;
-}
+// REGISTER ÉTUDIANT
+module.exports.register = (req, res) => {
+    console.log("Route register POST appelée");
+    const { nom, prenom, email, password, tel } = req.body;
 
-// Inscription étudiant
-module.exports.register = async (req, res) => {
-  console.log("Route register POST appelée");
-  let { nom, prenom, email, password, tel } = req.body;
-  console.log("Données reçues:", { nom, prenom, email, tel });
-
-  try {
     const checkSql = "SELECT * FROM users WHERE email = ?";
-    db.query(checkSql, [email], async (err, results) => {
-      if (err) {
-        console.error("Erreur SQL check:", err);
-        return res.redirect("/register?error=server_error");
-      }
-      if (results.length > 0) {
-        console.log("Email déjà utilisé:", email);
-        return res.redirect("/register?error=email_exists");
-      }
+    db.query(checkSql, [email], (err, results) => {
+        if (err) {
+            console.error("Erreur SQL check:", err);
+            return res.redirect("/user/register?error=server_error");
+        }
+        if (results.length > 0) {
+            console.log("Email déjà utilisé:", email);
+            return res.redirect("/user/register?error=email_exists");
+        }
 
-      try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        console.log("Mot de passe hashé");
-
-        const insertSql = `
-          INSERT INTO users (nom, prenom, email, password, tel, roles_id)
-          VALUES (?, ?, ?, ?, COALESCE(?, ''), 1)
-        `;
-        // Passer exactement 5 paramètres pour les placeholders
-        db.query(
-          insertSql,
-          [nom, prenom, email, hashedPassword, tel],
-          (err, result) => {
-            if (err) {
-              console.error("Erreur SQL insert:", err);
-              return res.redirect("/register?error=server_error");
+        bcrypt.hash(password, saltRounds, (hashErr, hashedPassword) => {
+            if (hashErr) {
+                console.error("Erreur hash:", hashErr);
+                return res.redirect("/user/register?error=server_error");
             }
-            console.log("✅ Utilisateur créé:", result.insertId);
-            req.session.user = {
-              id: result.insertId,
-              nom,
-              prenom,
-              email,
-              tel,
-              roles_id: 1,
-            };
-            return res.redirect("/dashboard");
-          }
-        );
-      } catch (hashError) {
-        console.error("Erreur hash:", hashError);
-        return res.redirect("/register?error=server_error");
-      }
+
+            const insertSql = `
+                INSERT INTO users (nom, prenom, email, password, tel, joined_at, roles_id)
+                VALUES (?, ?, ?, ?, ?, NOW(), 1)
+            `;
+            db.query(insertSql, [nom, prenom, email, hashedPassword, tel || ''], (insertErr, result) => {
+                if (insertErr) {
+                    console.error("Erreur SQL insert:", insertErr);
+                    return res.redirect("/user/register?error=server_error");
+                }
+                console.log("✅ Étudiant créé:", result.insertId);
+                res.redirect("/user/login");
+            });
+        });
     });
-  } catch (error) {
-    console.error("Erreur générale:", error);
-    return res.redirect("/register?error=server_error");
-  }
 };
 
-// Inscription professeur
-module.exports.pregister = async (req, res) => {
-  console.log("Route pregister POST appelée");
-  let { nom, prenom, email, password, tel } = req.body;
-  nom = (nom || "").trim();
-  prenom = (prenom || "").trim();
-  email = (email || "").trim();
-  password = (password || "").toString();
+// PREGISTER PROFESSEUR
+module.exports.pregister = (req, res) => {
+    console.log("Route pregister POST appelée");
+    const { nom, prenom, email, password, tel } = req.body;
 
-  try {
     const checkSql = "SELECT * FROM users WHERE email = ?";
-    db.query(checkSql, [email], async (err, results) => {
-      if (err) {
-        console.error("Erreur SQL check:", err);
-        return res.redirect("/pregister?error=server_error");
-      }
-      if (results.length > 0) {
-        console.log("Email déjà utilisé:", email);
-        return res.redirect("/pregister?error=email_exists");
-      }
+    db.query(checkSql, [email], (err, results) => {
+        if (err) {
+            console.error("Erreur SQL check:", err);
+            return res.redirect("/professeur/pregister?error=server_error");
+        }
+        if (results.length > 0) {
+            console.log("Email déjà utilisé:", email);
+            return res.redirect("/professeur/pregister?error=email_exists");
+        }
 
-      try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        console.log("Mot de passe hashé (prof)");
-
-        const insertSql = `
-          INSERT INTO users (nom, prenom, email, password, tel, roles_id)
-          VALUES (?, ?, ?, ?, COALESCE(?, ''), 2)
-        `;
-        db.query(
-          insertSql,
-          [nom, prenom, email, hashedPassword, tel],
-          (err, result) => {
-            if (err) {
-              console.error("Erreur SQL insert:", err);
-              return res.redirect("/pregister?error=server_error");
+        bcrypt.hash(password, saltRounds, (hashErr, hashedPassword) => {
+            if (hashErr) {
+                console.error("Erreur hash:", hashErr);
+                return res.redirect("/professeur/pregister?error=server_error");
             }
-            console.log("✅ Prof créé:", result.insertId);
-            req.session.user = {
-              id: result.insertId,
-              nom,
-              prenom,
-              email,
-              tel,
-              roles_id: 2,
-            };
-            return res.redirect("/dashboard");
-          }
-        );
-      } catch (hashError) {
-        console.error("Erreur hash:", hashError);
-        return res.redirect("/pregister?error=server_error");
-      }
+
+            const insertSql = `
+                INSERT INTO users (nom, prenom, email, password, tel, joined_at, roles_id)
+                VALUES (?, ?, ?, ?, ?, NOW(), 2)
+            `;
+            db.query(insertSql, [nom, prenom, email, hashedPassword, tel || ''], (insertErr, result) => {
+                if (insertErr) {
+                    console.error("Erreur SQL insert:", insertErr);
+                    return res.redirect("/professeur/pregister?error=server_error");
+                }
+                console.log("✅ Prof créé:", result.insertId);
+                res.redirect("/professeur/plogin");
+            });
+        });
     });
-  } catch (error) {
-    console.error("Erreur générale:", error);
-    return res.redirect("/pregister?error=server_error");
-  }
 };
 
-// Connexion étudiant
-module.exports.login = async function (req, res) {
-  console.log("Route de login appelée");
+// LOGIN ÉTUDIANT
+module.exports.login = async (req, res) => {
+    console.log("Route login appelée");
+    const { email, password } = req.body;
 
+    const sql = "SELECT * FROM users WHERE email = ?";
+    db.query(sql, [email], async (err, results) => {
+        if (err) {
+            console.error("Erreur SQL:", err);
+            return res.redirect("/user/login?error=server_error");
+        }
+        if (results.length === 0) {
+            console.log("Email non trouvé");
+            return res.redirect("/user/login?error=email_not_found");
+        }
 
-  const sql = "SELECT * FROM users WHERE email = ?";
-  db.query(sql, [email], async (err, results) => {
-    if (err) {
-      console.error("Erreur SQL:", err);
-      return res.redirect("/login?error=server_error");
-    }
-    if (results.length === 0) {
-      console.log("Email non trouvé");
-      return res.redirect("/login?error=email_not_found");
-    }
+        const user = results[0];
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
 
-    const user = results[0];
-    console.log("Hash stocké pour l'utilisateur:", user.password);
+        console.log("Résultat compare:", isPasswordMatch);
 
-    try {
-      const validPassword = await bcrypt.compare(password, user.password);
-      console.log(password, user.password);
-      console.log("bcrypt.compare =>", validPassword);
-
-      if (!validPassword) {
-        console.log("Mot de passe incorrect");
-        return res.redirect("/login?error=invalid_password");
-      }
-
-      // Créer la session correctement en utilisant 'user'
-      req.session.user = {
-        id: getUserIdField(user),
-        nom: user.nom,
-        prenom: user.prenom,
-        email: user.email,
-        tel: user.tel,
-        roles_id: user.roles_id ?? 1,
-      };
-      return res.redirect("/dashboard");
-    } catch (compareErr) {
-      console.error("Erreur lors du compare bcrypt:", compareErr);
-      return res.redirect("/login?error=server_error");
-    }
-  });
+        if (!isPasswordMatch) {
+            console.log('Mot de passe incorrect');
+            return res.redirect("/user/login?error=invalid_password");
+        }
+        
+        req.session.user = {
+            id: user.id,
+            nom: user.nom,
+            prenom: user.prenom,
+            email: user.email,
+            tel: user.tel || '',
+            joined_at: user.joined_at,
+            roles_id: user.roles_id || 1
+        };
+        console.log("✅ Login étudiant réussi");
+        console.log("SESSION", req.session.user);
+        res.redirect("/dashboard?message=success");
+    });
 };
 
-// Connexion professeur
-module.exports.plogin = async function (req, res) {
-  console.log("Route de plogin appelée");
-  const email = (req.body.email || "").trim();
-  const password = (req.body.password || "").toString();
+// PLOGIN PROFESSEUR
+module.exports.plogin = async (req, res) => {
+    console.log("Route plogin appelée");
+    const { email, password } = req.body;
 
-  const sql = "SELECT * FROM users WHERE email = ?";
-  db.query(sql, [email], async (err, results) => {
-    if (err) {
-      console.error("Erreur SQL:", err);
-      return res.redirect("/plogin?error=server_error");
+    const sql = "SELECT * FROM users WHERE email = ?";
+    db.query(sql, [email], async (err, results) => {
+        if (err) {
+            console.error("Erreur SQL:", err);
+            return res.redirect("/professeur/plogin?error=server_error");
+        }
+        if (results.length === 0) {
+            return res.redirect("/professeur/plogin?error=email_not_found");
+        }
+
+        const user = results[0];
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+        console.log("Résultat compare:", isPasswordMatch);
+
+        if (!isPasswordMatch) {
+            console.log('Mot de passe incorrect');
+            return res.redirect("/professeur/plogin?error=invalid_password");
+        }
+        
+        req.session.user = {
+            id: user.id,
+            nom: user.nom,
+            prenom: user.prenom,
+            email: user.email,
+            tel: user.tel || '',
+            joined_at: user.joined_at,
+            roles_id: user.roles_id || 2
+        };
+        res.redirect("/dashboard");
+        console.log("✅ Login prof réussi");
+        console.log("SESSION", req.session.user);
+    });
+};
+
+// Info du user
+module.exports.getUserInfo = (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ success: false, message: 'Non connecté' });
     }
-    if (results.length === 0) {
-      return res.redirect("/plogin?error=email_not_found");
-    }
-
-    const user = results[0];
-    console.log("Hash stocké pour le prof:", user.password);
-
-    try {
-      const validPassword = await bcrypt.compare(password, user.password);
-      console.log("bcrypt.compare (prof) =>", validPassword);
-
-      if (!validPassword) {
-        return res.redirect("/plogin?error=invalid_password");
-      }
-
-      req.session.user = {
-        id: getUserIdField(user),
-        nom: user.nom,
-        prenom: user.prenom,
-        email: user.email,
-        tel: user.tel,
-        roles_id: user.roles_id ?? 2,
-      };
-      return res.redirect("/dashboard");
-    } catch (compareErr) {
-      console.error("Erreur lors du compare bcrypt:", compareErr);
-      return res.redirect("/plogin?error=server_error");
-    }
-  });
+    
+    console.log("✅ User info demandé:", req.session.user);
+    res.json({ 
+        success: true, 
+        user: req.session.user 
+    });
 };

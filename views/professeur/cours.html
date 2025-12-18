@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des cours</title>
+    <link rel="stylesheet" href="/stylesheets/cours.css">
+</head>
+<body>
+    <div class="container">
+        <div class="cours_form">
+            <h2>Ajouter un nouveau cours</h2>
+                    <div id="error-container"></div>
+            <form id="cours" action="/professeur/cours" method="post">
+                <div class="input-group">
+                    <label for="titre_cours">Titre du cours</label>
+                    <input type="text" id="titre_cours" name="titre_cours" required>
+                </div>
+                <div class="input-group">
+                    <label for="desc_cours">Description du cours</label>
+                    <textarea id="desc_cours" name="desc_cours" required></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="prix">Prix du cours (Fcfa)</label>
+                    <input type="number" id="prix" name="prix" step="0.01" min="0" required>
+                </div>
+                <div class="input-group">
+                    <label for="duree_minutes">Durée en minutes</label>
+                    <input type="number" id="duree_minutes" name="duree_minutes" min="1" required>
+                </div>
+                <div class="input-group">
+                    <label for="pre_requis">Pré-requis du cours</label>
+                    <textarea id="pre_requis" name="pre_requis" required></textarea>
+                </div> 
+                <div class="input-group">
+                    <label for="categories_id">Catégorie</label>
+                    <div class="select">
+                        <select id="categories_id" name="categories_id" required>
+                            <option value="">Chargement des catégories...</option>
+                        </select>
+                    </div>
+                </div> 
+                <div class="input-group">
+                    <label for="niveau_id">Niveau</label>
+                    <div class="select">
+                        <select id="niveau_id" name="niveau_id" required>
+                            <option value="">Chargement des niveau...</option>
+                        </select>
+                    </div>
+                </div> 
+                <button type="submit" class="btn">Ajouter le cours</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function loadCategories() {
+            try {
+                const response = await fetch('/categories', {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+                const data = await response.json();
+
+                const select = document.getElementById('categories_id');
+
+                if (!data.success) {
+                    console.error('Erreur catégories:', data.message);
+                    select.innerHTML = '<option value="">Erreur de chargement</option>';
+                    return;
+                }
+
+                select.innerHTML = '<option value="">Sélectionner une catégorie</option>';
+
+                data.categories.forEach((category) => {
+                    const option = document.createElement('option');
+                    option.value = category.id; 
+                    option.textContent = category.nom_cat; 
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Erreur fetch catégories:', err);
+            }
+        }
+
+        async function loadNiveaux() {
+            try {
+                const response = await fetch('/niveau', {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+                const data = await response.json();
+
+                const select = document.getElementById('niveau_id');
+
+                if (!data.success) {
+                    console.error('Erreur niveau:', data.message);
+                    select.innerHTML = '<option value="">Erreur de chargement</option>';
+                    return;
+                }
+
+                select.innerHTML = '<option value="">Sélectionner un niveau</option>';
+
+                data.niveaux.forEach((niveau) => {
+                    const option = document.createElement('option');
+                    option.value = niveau.id; 
+                    option.textContent = niveau.nom; 
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Erreur fetch niveaux:', err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadCategories);
+        document.addEventListener('DOMContentLoaded', loadNiveaux);
+
+    // Récupère le paramètre 'error' dans l'URL 
+    const error = new URLSearchParams(window.location.search).get('error');
+    // Si un paramètre error existe dans l'URL
+    if (error) {
+        // Définition des messages d'erreur selon la valeur de 'error'
+        const messages = {
+            server_error: "Erreur serveur, réessayez plus tard.",
+            cours_exists: "Nom de cours déja existant.",
+        };
+        // Sélection de la div qui contiendra le message d'erreur dans la page
+        const container = document.getElementById('error-container');
+
+        // Injection dynamique du message d'erreur dans cette div
+        container.innerHTML = `<div id="error-message">${messages[error] || "Erreur inconnue."}</div>`;
+    }
+    </script>
+</body>
+</html>

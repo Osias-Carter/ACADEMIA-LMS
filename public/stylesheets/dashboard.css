@@ -1,506 +1,537 @@
-/* ==========================================================================
-   RESET & BASE STYLES
-   ========================================================================== */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  line-height: 1.6;
-  color: #2d3748;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 70%, #f5576c 100%);
-  min-height: 100vh;
-  display: flex;
-  overflow-x: hidden;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8f9fa;
+    color: #1a1a1a;
+    overflow-x: hidden;
 }
 
-/* ==========================================================================
+/* ========================================
    SIDEBAR
-   ========================================================================== */
+======================================= */
 .sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 260px;
-  height: 100vh;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 30px 20px;
-  box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  font-weight: 600;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background: linear-gradient(180deg, #1a1a1a 0%, #0f1419 100%);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    padding: 32px 0;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.sidebar .logo {
-  font-size: 24px;
-  font-weight: 800;
-  margin-bottom: 40px;
-  letter-spacing: 1px;
-  text-align: center;
-  user-select: none;
-  color: #ffd23f;
+.logo {
+    padding: 0 32px 32px;
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    margin-bottom: 48px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo i {
+    font-size: 32px;
+    margin-right: 12px;
+    background: linear-gradient(135deg, #1a73e8, #34a853);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.logo-highlight {
+    background: linear-gradient(135deg, #34a853, #7cb342);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .admin-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex-grow: 1;
+    padding: 0 24px;
 }
 
-.admin-nav a {
-  color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
-  font-size: 17px;
-  padding: 12px 20px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    color: #adb5bd;
+    text-decoration: none;
+    border-radius: 16px;
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
-.admin-nav a i {
-  font-size: 20px;
-  width: 24px;
-  text-align: center;
+.nav-link i {
+    width: 20px;
+    font-size: 18px;
 }
 
-.admin-nav a:hover,
-.admin-nav a.active {
-  background: rgba(255, 210, 63, 0.85);
-  color: #2d3748;
-  font-weight: 700;
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateX(4px);
 }
 
-/* Logout Button */
+.nav-link.active {
+    background: linear-gradient(135deg, rgba(26, 115, 232, 0.2), rgba(52, 168, 83, 0.2));
+    color: white;
+    box-shadow: 0 4px 16px rgba(26, 115, 232, 0.2);
+}
+
 .logout-btn {
-  margin-top: auto;
-  background: #ff6b6b;
-  border: none;
-  color: white;
-  font-weight: 700;
-  font-size: 16px;
-  padding: 14px 20px;
-  border-radius: 14px;
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.logout-btn i {
-  font-size: 18px;
+    margin-top: auto;
+    padding: 20px 32px;
+    color: #ff6b6b;
+    font-weight: 600;
+    border-radius: 16px;
+    border: none;
+    background: rgba(255, 107, 107, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 64px);
 }
 
 .logout-btn:hover {
-  background: #f44336;
-  box-shadow: 0 8px 20px rgba(244, 67, 54, 0.5);
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff5252;
+    transform: translateX(-50%) translateY(-2px);
 }
 
-/* ==========================================================================
+/* ========================================
    MAIN CONTENT
-   ========================================================================== */
+======================================= */
 .main-content {
-  margin-left: 260px;
-  padding: 40px 40px 80px;
-  flex: 1;
-  background: #f8fafc;
-  min-height: 100vh;
-  overflow-y: auto;
+    margin-left: 280px;
+    min-height: 100vh;
+    padding: 32px;
 }
 
-/* Headers */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+   HEADER
+======================================= */
+.header {
+    margin-bottom: 32px;
+}
+
 .header h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 24px;
-  color: #2d3748;
-  letter-spacing: 0.5px;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-/* ==========================================================================
+.header i {
+    color: #1a73e8;
+}
+
+/* ========================================
    STATS SECTION
-   ========================================================================== */
+======================================= */
+.stats-section {
+    margin-bottom: 40px;
+}
+
 .stats-section h3 {
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #4a5568;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 24px;
 }
 
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
 }
 
 .stat-card {
-  background: white;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
-  padding: 32px 24px;
-  border-radius: 20px;
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white;
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-.stat-card h4 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #667eea;
-}
-
-.stat-card p {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #2d3748;
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1a73e8, #4285f4);
 }
 
 .stat-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.25);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
 }
 
-.note {
-  margin-top: 20px;
-  font-style: italic;
-  color: #a0aec0;
-  font-size: 14px;
+.stat-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #1a73e8, #4285f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
 }
 
-/* ==========================================================================
-   COURS SECTION
-   ========================================================================== */
-.cours-section h2,
-.explore-section h2,
-.account-section h3 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2d3748;
-  margin-bottom: 24px;
+.stat-card h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #5f6368;
+    margin-bottom: 12px;
 }
 
+.stat-card p {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+}
+
+/* ========================================
+   COURS GRID
+======================================= */
 .cours-grid {
-  display: grid;
-  gap: 24px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 24px;
 }
 
 .cours-card {
-  background: white;
-  border-radius: 20px;
-  padding: 24px 20px;
-  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-.cours-card h4 {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #2d3748;
-  margin-bottom: 12px;
+.cours-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff9800, #ffb74d);
 }
 
-.cours-card p {
-  font-size: 1rem;
-  color: #4a5568;
-  flex-grow: 1;
-  margin-bottom: 20px;
+.cours-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
 }
 
-.view-btn,
-.enroll-btn,
-.edit-btn,
-.search-btn {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border: none;
-  border-radius: 36px;
-  color: white;
-  font-weight: 700;
-  font-size: 15px;
-  padding: 12px 28px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.cours-card h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #1a1a1a;
 }
 
-.view-btn i,
-.enroll-btn i,
-.edit-btn i,
-.search-btn i {
-  font-size: 16px;
+.desc {
+    color: #5f6368;
+    margin-bottom: 20px;
+    line-height: 1.6;
 }
 
-.view-btn:hover,
-.enroll-btn:hover,
-.edit-btn:hover {
-  background: linear-gradient(135deg, #764ba2, #667eea);
-  transform: translateY(-3px);
+.meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #9aa0a6;
 }
 
-.search-bar {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
 }
 
-.search-bar input[type="text"] {
-  flex: 1;
-  padding: 12px 20px;
-  border-radius: 36px;
-  border: 2px solid #cbd5e1;
-  font-size: 16px;
-  outline: none;
-  transition: border-color 0.3s ease;
+.btn-small {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
 }
 
-.search-bar input[type="text"]:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 7px rgba(102, 126, 234, 0.3);
+.btn-edit {
+    background: linear-gradient(135deg, #34a853, #7cb342);
+    color: white;
 }
 
-/* ==========================================================================
+.btn-delete {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white;
+}
+
+.btn-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
    ACCOUNT SECTION
-   ========================================================================== */
-.account-section p {
-  font-size: 1.1rem;
-  color: #4a5568;
-  margin-bottom: 12px;
-  font-weight: 600;
+======================================= */
+.account-section {
+    background: white;
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 32px;
+    align-items: center;
 }
 
-.edit-btn {
-  margin-top: 20px;
+.account-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a73e8, #4285f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: white;
+    flex-shrink: 0;
 }
 
-/* ==========================================================================
-   TAB CONTENT
-   ========================================================================== */
-.tab-content {
-  animation: fadeInContent 0.5s ease forwards;
-  opacity: 0;
+.account-info h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1a1a1a;
 }
 
-.tab-content.ng-star-inserted {
-  opacity: 1;
+.account-email {
+    font-size: 1.1rem;
+    color: #5f6368;
+    font-weight: 500;
 }
 
-@keyframes fadeInContent {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.account-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
 }
 
-/* ==========================================================================
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.detail-row label {
+    font-weight: 600;
+    color: #5f6368;
+}
+
+/* ========================================
+   LOADING & UTILS
+======================================= */
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    font-size: 1.1rem;
+    color: #9aa0a6;
+}
+
+.loading-spinner::before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e8f0fe;
+    border-top: 3px solid #1a73e8;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 16px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.add-course-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #34a853, #7cb342);
+    color: white;
+    text-decoration: none;
+    border-radius: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    float: right;
+}
+
+.add-course-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(52, 168, 83, 0.3);
+}
+
+/* ========================================
    RESPONSIVE
-   ========================================================================== */
+======================================= */
 @media (max-width: 1024px) {
-  .sidebar {
-    width: 220px;
-    padding: 25px 15px;
-  }
-  .main-content {
-    margin-left: 220px;
-    padding: 30px 30px 70px;
-  }
-  .cours-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
 }
 
 @media (max-width: 768px) {
-  body {
-    flex-direction: column;
-  }
-  .sidebar {
-    position: relative;
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    padding: 12px 20px;
-    box-shadow: none;
-    justify-content: space-around;
-  }
-  .sidebar .logo {
-    font-size: 20px;
-    margin-bottom: 0;
-    color: #ffd23f;
-  }
-  .admin-nav {
-    flex-direction: row;
-    gap: 12px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-  }
-  .admin-nav a {
-    padding: 10px 12px;
-    font-size: 14px;
-  }
-  .logout-btn {
-    display: none;
-  }
-  .main-content {
-    margin-left: 0;
-    padding: 20px;
-  }
+    .main-content {
+        padding: 20px;
+    }
+    
+    .cours-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    
+    .account-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 24px;
+    }
 }
 
-@media (max-width: 480px) {
-  .cours-grid {
-    grid-template-columns: 1fr;
-  }
-  .search-bar {
-    flex-direction: column;
-  }
-  .search-bar input[type="text"],
-  .search-bar button {
-    width: 100%;
-  }
+.explorer-grid, #etudiant-liste {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
 }
-/* AJOUTS pour le nouveau HTML */
-.logo-highlight { color: #ffd23f; }
-.header-subtitle { 
-    color: #64748b; 
-    font-size: 16px; 
-    margin-bottom: 32px; 
+/* COURS CARDS RETRECIES - VOLUME RÉDUIT */
+.cours-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Était 320px */
+    gap: 16px; /* Réduit */
 }
-.stat-icon { 
-    width: 60px; 
-    height: 60px; 
-    background: linear-gradient(135deg, #667eea, #764ba2); 
-    border-radius: 16px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    margin: 0 auto 16px; 
-    font-size: 24px; 
-    color: white; 
+
+.cours-card {
+    background: white;
+    border-radius: 16px; /* Plus petit */
+    padding: 20px; /* Était 28px */
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08); /* Ombre réduite */
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    position: relative;
 }
-.stat-number { font-size: 2.5rem !important; }
-.stat-change { 
-    display: block; 
-    font-size: 14px; 
-    font-weight: 500; 
+
+.cours-card::before {
+    height: 3px; /* Plus fin */
 }
-.stat-change.positive { color: #48bb78; }
-.cours-header { 
-    display: flex; 
-    align-items: center; 
-    gap: 12px; 
-    margin-bottom: 12px; 
+
+.cours-card h3 {
+    font-size: 1.2rem; /* Plus petit */
+    margin-bottom: 8px; /* Réduit */
 }
-.cours-header i { 
-    font-size: 32px; 
-    color: #667eea; 
-    flex-shrink: 0; 
+
+.desc {
+    font-size: 13.5px; /* Plus petit */
+    margin-bottom: 12px; /* Réduit */
+    line-height: 1.5;
 }
-.cours-progress { margin-bottom: 20px; }
-.progress-bar { 
-    height: 8px; 
-    background: #e2e8f0; 
-    border-radius: 4px; 
-    overflow: hidden; 
-    margin-bottom: 8px; 
+
+.meta {
+    font-size: 12.5px; /* Plus petit */
+    margin-bottom: 4px;
 }
-.progress-fill { 
-    height: 100%; 
-    background: linear-gradient(90deg, #48bb78, #38a169); 
-    transition: width 0.5s ease; 
-    border-radius: 4px; 
+
+.actions {
+    gap: 8px; /* Réduit */
+    margin-top: 16px; /* Réduit */
 }
-.featured-badge { 
-    position: absolute; 
-    top: 16px; 
-    right: 16px; 
-    background: #48bb78; 
-    color: white; 
-    padding: 6px 12px; 
-    border-radius: 20px; 
-    font-size: 12px; 
-    font-weight: 700; 
+
+.btn-small {
+    padding: 8px 14px; /* Plus petit */
+    font-size: 12.5px; /* Plus petit */
+    border-radius: 10px; /* Plus petit */
 }
-.cours-card.featured { position: relative; }
-.cours-meta { 
-    display: flex; 
-    gap: 16px; 
-    margin-bottom: 20px; 
-    font-size: 14px; 
-    color: #64748b; 
+
+/* STATS AUSSI PLUS COMPACTES */
+.stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Réduit */
+    gap: 16px;
 }
-.cours-meta i { margin-right: 4px; }
-.account-avatar { 
-    width: 120px; 
-    height: 120px; 
-    background: linear-gradient(135deg, #667eea, #764ba2); 
-    border-radius: 50%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 48px; 
-    color: white; 
-    margin: 0 auto 24px; 
+
+.stat-card {
+    padding: 24px 16px; /* Réduit */
+    border-radius: 16px;
 }
-.account-info h3 { 
-    text-align: center; 
-    font-size: 28px; 
-    margin-bottom: 8px; 
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 20px;
 }
-.account-email { 
-    text-align: center; 
-    color: #64748b; 
-    font-size: 18px; 
-}
-.detail-row { 
-    display: flex; 
-    justify-content: space-between; 
-    padding: 16px 0; 
-    border-bottom: 1px solid #e2e8f0; 
-}
-.detail-row:last-child { border-bottom: none; }
-.account-actions { 
-    display: flex; 
-    gap: 16px; 
-    flex-wrap: wrap; 
-    margin-top: 32px; 
-}
-.password-btn { 
-    background: linear-gradient(135deg, #ed8936, #dd6b20); 
-}
-.search-input { 
-    position: relative; 
-    flex: 1; 
-}
-.search-input i { 
-    position: absolute; 
-    left: 20px; 
-    top: 50%; 
-    transform: translateY(-50%); 
-    color: #94a3b8; 
-    z-index: 1; 
-}
-.search-input input { 
-    padding-left: 48px; 
+
+.stat-card p {
+    font-size: 1.6rem; /* Légèrement réduit */
 }

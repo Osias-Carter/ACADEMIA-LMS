@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - AcademiaLMS</title>
-    <!-- Vos liens CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/dashboard.css">
 </head>
 <body>
     <!-- Sidebar -->
@@ -14,7 +16,7 @@
             <span>Academia<span class="logo-highlight">LMS</span></span>
         </div>
         <nav class="admin-nav" id="nav-links">
-            <!-- Navigation dynamique -->
+            <!-- Navigation dynamique générée par JS -->
         </nav>
         <button class="logout-btn" id="logoutBtn">
             <i class="fas fa-sign-out-alt"></i><span>Déconnexion</span>
@@ -24,174 +26,347 @@
     <main class="main-content">
         <!-- Dashboard Étudiant -->
         <section class="tab-content" id="dash-etudiant" style="display:none;">
-            <div class="header"><h2><i class="fas fa-tachometer-alt"></i> Dashboard Étudiant</h2></div>
+            <div class="header">
+                <h2><i class="fas fa-tachometer-alt"></i> Dashboard Étudiant</h2>
+            </div>
             <div class="stats-section">
                 <h3>Vos statistiques</h3>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-book"></i></div><h4>Cours Actifs</h4><p>12</p></div>
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-clock"></i></div><h4>Heures</h4><p>45h</p></div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-book"></i></div>
+                        <h4>Cours Actifs</h4>
+                        <p id="cours-actifs">12</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <h4>Heures Complétées</h4>
+                        <p>45h</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-star"></i></div>
+                        <h4>Moyenne</h4>
+                        <p>4.8/5</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Cours Étudiant -->
         <section class="tab-content" id="cours" style="display:none;">
-            <div class="header"><h2><i class="fas fa-book-open"></i> Mes Cours</h2></div>
-            <div id="etudiant-cours-list">Chargement de vos cours...</div>
+            <div class="header">
+                <h2><i class="fas fa-book-open"></i> Mes Cours</h2>
+            </div>
+            <div id="etudiant-liste">
+                <div class="loading-spinner">Chargement de vos cours...</div>
+            </div>
         </section>
 
         <!-- Explorer Étudiant -->
         <section class="tab-content" id="explorer" style="display:none;">
-            <div class="header"><h2><i class="fas fa-search"></i> Explorer</h2></div>
-            <div>Rechercher et découvrir de nouveaux cours...</div>
+            <div class="header">
+                <h2><i class="fas fa-search"></i> Explorer Cours</h2>
+            </div>
+            <div id="explorer-liste">
+                <div class="loading-spinner">Chargement des cours disponibles...</div>
+            </div>
         </section>
 
         <!-- Dashboard Professeur -->
         <section class="tab-content" id="dash-prof" style="display:none;">
-            <div class="header"><h2><i class="fas fa-chalkboard-teacher"></i> Dashboard Professeur</h2></div>
+            <div class="header">
+                <h2><i class="fas fa-chalkboard-teacher"></i> Dashboard Professeur</h2>
+            </div>
             <div class="stats-section">
                 <h3>Statistiques</h3>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-book"></i></div><h4>Cours Créés</h4><p>8</p></div>
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><h4>Étudiants</h4><p>247</p></div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-book"></i></div>
+                        <h4>Cours Créés</h4>
+                        <p>8</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <h4>Étudiants</h4>
+                        <p>247</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-euro-sign"></i></div>
+                        <h4>Revenus</h4>
+                        <p>€1,240</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Gestion Cours CRUD Prof -->
         <section class="tab-content" id="cours-crud" style="display:none;">
-            <div class="header"><h2><i class="fas fa-book"></i> Gestion Cours</h2></div>
-            <button class="add-course-btn" id="addCourseBtn"><i class="fas fa-plus"></i> Nouveau Cours</button>
-            <div id="prof-cours-list">Chargement de vos cours...</div>
+            <div class="header">
+                <h2><i class="fas fa-book"></i> Gestion Cours</h2>
+                <a href="./professeur/cours.html" class="add-course-btn">
+                    <i class="fas fa-plus"></i> Nouveau cours
+                </a>
+            </div>
+            <div id="liste">
+                <div class="loading-spinner">Chargement de vos cours...</div>
+            </div>
         </section>
 
         <!-- Compte (commun) -->
         <section class="tab-content" id="compte" style="display:none;">
-            <div class="header"><h2><i class="fas fa-user-circle"></i> Mon Compte</h2></div>
+            <div class="header">
+                <h2><i class="fas fa-user-circle"></i> Mon Compte</h2>
+            </div>
             <div class="account-section">
-                <div class="account-avatar"><i class="fas fa-user"></i></div>
+                <div class="account-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
                 <div class="account-info">
                     <h3 id="user-name">Chargement...</h3>
                     <p class="account-email" id="user-email">-</p>
                 </div>
                 <div class="account-details">
-                    <div class="detail-row"><label>Téléphone</label><span id="user-phone">-</span></div>
-                    <div class="detail-row"><label>Rôle</label><span id="user-role">-</span></div>
-                    <div class="detail-row"><label>Membre depuis</label><span id="user-date">-</span></div>
+                    <div class="detail-row">
+                        <label>Téléphone</label>
+                        <span id="user-phone">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Rôle</label>
+                        <span id="user-role">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Date d'inscription</label>
+                        <span id="user-join">-</span>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <script>
-        let currentUser = null;
-        let isLoadingUser = true;
+<script>
+let currentUser = null;
+let isLoadingUser = true;
 
-        // Récupérer les infos utilisateur depuis le backend
-        async function fetchUserData() {
-            try {
-                const response = await fetch('authRoutes/getUserSession', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentUser = data.user;
-                } else {
-                    // Rediriger vers login si pas connecté
-                    window.location.href = '/login';
-                    return;
-                }
-            } catch (error) {
-                console.error('Erreur fetch user:', error);
-                window.location.href = '/login';
-                return;
-            }
-            
-            isLoadingUser = false;
-            initializeDashboard();
+async function fetchUserData() {
+    try {
+        const response = await fetch('/user-info', { credentials: 'include' });
+        const data = await response.json();
+        
+        if (data.success) {
+            currentUser = data.user;
+            console.log('✅ User chargé:', currentUser);
+        } else {
+            window.location.href = '/user/login';
+            return;
+        }
+    } catch (error) {
+        console.error('❌ Erreur fetch user:', error);
+        window.location.href = '/user/login';
+        return;
+    }
+    
+    isLoadingUser = false;
+    initializeDashboard();  
+}
+
+function setNavLinks(roles_id) {
+    const navLinks = document.getElementById('nav-links');
+    if (roles_id === 1) {
+        navLinks.innerHTML = `
+            <a href="#" class="nav-link active" data-tab="dash-etudiant">
+                <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-link" data-tab="cours">
+                <i class="fas fa-book-open"></i><span>Cours</span>
+            </a>
+            <a href="#" class="nav-link" data-tab="explorer">
+                <i class="fas fa-search"></i><span>Explorer</span>
+            </a>
+            <a href="#" class="nav-link" data-tab="compte">
+                <i class="fas fa-user-circle"></i><span>Compte</span>
+            </a>
+        `;
+    } else if (roles_id === 2) {
+        navLinks.innerHTML = `
+            <a href="#" class="nav-link active" data-tab="dash-prof">
+                <i class="fas fa-chalkboard-teacher"></i><span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-link" data-tab="cours-crud">
+                <i class="fas fa-book"></i><span>Gestion Cours</span>
+            </a>
+            <a href="#" class="nav-link" data-tab="compte">
+                <i class="fas fa-user-circle"></i><span>Compte</span>
+            </a>
+        `;
+    }
+}
+
+function showTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = tab.id === tabId ? 'block' : 'none';
+    });
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.toggle('active', link.dataset.tab === tabId);
+    });
+}
+
+function showUserInfo(user) {
+    document.getElementById('user-name').textContent = `${user.nom} ${user.prenom}`;
+    document.getElementById('user-email').textContent = user.email;
+    document.getElementById('user-phone').textContent = user.tel || '-';
+    document.getElementById('user-role').textContent = user.roles_id === 1 ? 'Étudiant' : 'Professeur';
+    document.getElementById('user-join').textContent = user.joined_at ? new Date(user.joined_at).toLocaleDateString() : '-';
+}
+
+async function fetchCoursProf() {
+    try {
+        const res = await fetch('/professeur/cours-list', { credentials: 'include' }); 
+        const data = await res.json();
+        console.log('📊 Réponse API:', data);
+
+        const container = document.getElementById('liste'); 
+        if (!data.success || !data.cours?.length) {
+            container.innerHTML = '<p>Aucun cours pour le moment.</p>';
+            return;
         }
 
-        function setNavLinks(role) {
-            const navLinks = document.getElementById('nav-links');
-            if (role === 1) { // Étudiant
-                navLinks.innerHTML = `
-                    <a href="#" class="nav-link active" data-tab="dash-etudiant">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </a>
-                    <a href="#" class="nav-link" data-tab="cours">
-                        <i class="fas fa-book-open"></i> Cours
-                    </a>
-                    <a href="#" class="nav-link" data-tab="explorer">
-                        <i class="fas fa-search"></i> Explorer
-                    </a>
-                    <a href="#" class="nav-link" data-tab="compte">
-                        <i class="fas fa-user-circle"></i> Compte
-                    </a>
-                `;
-            } else if (role === 2) { // Professeur
-                navLinks.innerHTML = `
-                    <a href="#" class="nav-link active" data-tab="dash-prof">
-                        <i class="fas fa-chalkboard-teacher"></i> Dashboard
-                    </a>
-                    <a href="#" class="nav-link" data-tab="cours-crud">
-                        <i class="fas fa-book"></i> Gestion Cours
-                    </a>
-                    <a href="#" class="nav-link" data-tab="compte">
-                        <i class="fas fa-user-circle"></i> Compte
-                    </a>
-                `;
-            }
+        container.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.className = 'cours-grid';
+
+        data.cours.forEach(cours => {
+            const card = document.createElement('div');
+            card.className = 'cours-card';
+            card.innerHTML = `
+                <h3>${cours.titre_cours}</h3>
+                <p class="desc">${cours.desc_cours || ''}</p>
+                <div class="meta">
+                    <span>${cours.duree_minutes || 0} min</span>
+                    <span>${cours.prix || 0} Fcfa</span>
+                </div>
+                <div class="meta">
+                    <span>Étudiants: ${cours.total_etudiants || 0}</span>
+                    <span>Note: ${cours.note_moyenne ?? 0}/5</span>
+                </div>
+                <div class="actions">
+                    <button class="btn-small btn-edit" data-id="${cours.id}">Modifier</button>
+                    <button class="btn-small btn-delete" data-id="${cours.id}">Supprimer</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        container.appendChild(grid);
+    } catch (e) {
+        console.error('❌ ERREUR fetchCoursProf:', e);
+        document.getElementById('liste').innerHTML = '<p>Erreur chargement cours.</p>';
+    }
+}
+
+async function fetchCoursEtudiant() {
+    try {
+        const res = await fetch('/etudiant/tous-cours', { credentials: 'include' }); 
+        const data = await res.json();
+        
+        const container = document.getElementById('etudiant-liste');
+        if (!data.success || !data.cours?.length) {
+            container.innerHTML = '<p>Aucun cours disponible.</p>';
+            return;
         }
 
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.style.display = tab.id === tabId ? 'block' : 'none';
-            });
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.toggle('active', link.dataset.tab === tabId);
-            });
-        }
+        container.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.className = 'cours-grid';
 
-        function showUserInfo(user) {
-            document.getElementById('user-name').textContent = `${user.nom} ${user.prenom}`;
-            document.getElementById('user-email').textContent = user.email;
-            document.getElementById('user-phone').textContent = user.tel || 'Non renseigné';
-            document.getElementById('user-role').textContent = user.roles_id === 1 ? 'Étudiant' : 'Professeur';
-            document.getElementById('user-date').textContent = user.membreDepuis || new Date().toLocaleDateString('fr-FR');
-        }
+        data.cours.forEach(cours => {
+            const inscrit = cours.inscrit === 1; // Vérifier si déjà inscrit
+            const card = document.createElement('div');
+            card.className = 'cours-card';
+            card.innerHTML = `
+                <h3>${cours.titre_cours}</h3>
+                <p class="desc">${cours.desc_cours || ''}</p>
+                <div class="meta">
+                    <span>${cours.duree_minutes || 0} min</span>
+                    <span>${cours.prix || 0} Fcfa</span>
+                </div>
+                <div class="meta">
+                    <span>Étudiants: ${cours.total_etudiants || 0}</span>
+                    <span>Note: ${cours.note_moyenne ?? 0}/5</span>
+                </div>
+                <div class="actions">
+                    ${inscrit ? 
+                        '<button class="btn-small btn-success" disabled>Déjà inscrit</button>' : 
+                        `<button class="btn-small btn-primary s-inscrire" data-id="${cours.id}">S'inscrire</button>`
+                    }
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        container.appendChild(grid);
 
-        function initializeDashboard() {
-            setNavLinks(currentUser.roles_id);
-            
-            // Afficher le bon dashboard par défaut
-            const defaultTab = currentUser.roles_id === 1 ? 'dash-etudiant' : 'dash-prof';
-            showTab(defaultTab);
-            
-            showUserInfo(currentUser);
-            
-            // Navigation
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', e => {
-                    e.preventDefault();
-                    showTab(link.dataset.tab);
-                });
-            });
-
-            // Logout
-            document.getElementById('logoutBtn').addEventListener('click', async () => {
+        // Événements inscription
+        document.querySelectorAll('.s-inscrire').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const coursId = e.target.dataset.id;
                 try {
-                    await fetch('/logout', { method: 'POST' });
-                    window.location.href = '/login';
-                } catch (error) {
-                    window.location.href = '/login';
+                    const res = await fetch(`/etudiant/inscription/${coursId}`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+                    if (res.ok) {
+                        e.target.textContent = 'Inscrit !';
+                        e.target.disabled = true;
+                        e.target.classList.replace('btn-primary', 'btn-success');
+                    }
+                } catch (err) {
+                    alert('Erreur inscription');
                 }
             });
-        }
+        });
 
-        // Initialisation au chargement de la page
-        document.addEventListener('DOMContentLoaded', fetchUserData);
-    </script>
+    } catch (e) {
+        console.error('❌ ERREUR fetchCoursEtudiant:', e);
+        document.getElementById('etudiant-liste').innerHTML = '<p>Erreur chargement cours.</p>';
+    }
+}
+
+function initializeDashboard() {
+    setNavLinks(currentUser.roles_id);
+    const defaultTab = currentUser.roles_id === 1 ? 'dash-etudiant' : 'dash-prof';
+    showTab(defaultTab);
+    showUserInfo(currentUser);
+
+    if (currentUser.roles_id === 1) {
+    const coursTab = document.querySelector('[data-tab="cours"]');
+    if (coursTab && coursTab.classList.contains('active')) {
+        fetchCoursEtudiant();
+    }
+}
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const tab = link.dataset.tab;
+            showTab(tab);
+
+            if (tab === 'cours-crud') {
+                fetchCoursProf();
+            }
+            if (tab === 'cours') {
+    fetchCoursEtudiant();
+}
+        });
+    });
+
+    if (currentUser.roles_id === 2) {
+        const coursTab = document.getElementById('cours-crud');
+        if (coursTab.style.display !== 'none') {
+            fetchCoursProf();
+        }
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', fetchUserData);
+</script>
+
 </body>
 </html>
