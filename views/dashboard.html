@@ -64,7 +64,19 @@
         <!-- Explorer Étudiant -->
         <section class="tab-content" id="explorer" style="display:none;">
             <div class="header">
-                <h2><i class="fas fa-search"></i> Explorer Cours</h2>
+                <h2>Explorer Cours</h2>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Rechercher un cours..." class="search-input" id="explorer-search">
+                    </div>
+                    <select class="filterSelect" id="explorer-niveau">
+                        <option value="">Tous les niveaux</option>
+                        <option value="débutant">Débutant</option>
+                        <option value="intermédiaire">Intermédiaire</option>
+                        <option value="avancé">Avancé</option>
+                    </select>
+                </div>
             </div>
             <div id="explorer-liste">
                 <div class="loading-spinner">Chargement des cours disponibles...</div>
@@ -98,10 +110,16 @@
             </div>
         </section>
 
-        <!-- Gestion Cours CRUD Prof -->
+        <!-- Gestion Cours CRUD Prof  -->
         <section class="tab-content" id="cours-crud" style="display:none;">
             <div class="header">
-                <h2><i class="fas fa-book"></i> Gestion Cours</h2>
+                <h2>Gestion des Cours</h2>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Rechercher un cours..." class="search-input" id="prof-search">
+                    </div>
+                </div>
                 <a href="./professeur/cours.html" class="add-course-btn">
                     <i class="fas fa-plus"></i> Nouveau cours
                 </a>
@@ -145,7 +163,10 @@
 <script>
 let currentUser = null;
 let isLoadingUser = true;
+let allExplorerCourses = []; // Cache pour explorer (étudiants)
+let allProfCourses = [];     // Cache pour prof (gestion cours)
 
+// 🔄 Fetch user data
 async function fetchUserData() {
     try {
         const response = await fetch('/user-info', { credentials: 'include' });
@@ -168,6 +189,7 @@ async function fetchUserData() {
     initializeDashboard();  
 }
 
+// Navigation
 function setNavLinks(roles_id) {
     const navLinks = document.getElementById('nav-links');
     if (roles_id === 1) {
@@ -214,118 +236,206 @@ function showUserInfo(user) {
     document.getElementById('user-email').textContent = user.email;
     document.getElementById('user-phone').textContent = user.tel || '-';
     document.getElementById('user-role').textContent = user.roles_id === 1 ? 'Étudiant' : 'Professeur';
-    document.getElementById('user-join').textContent = user.joined_at ? new Date(user.joined_at).toLocaleDateString() : '-';
+    document.getElementById('user-join').textContent = user.joined_at ? new Date(user.joined_at).toLocaleDateString('fr-FR') : '-';
 }
 
+// 📚 Fetch cours prof
 async function fetchCoursProf() {
     try {
         const res = await fetch('/professeur/cours-list', { credentials: 'include' }); 
         const data = await res.json();
-        console.log('📊 Réponse API:', data);
 
-        const container = document.getElementById('liste'); 
+        const container = document.getElementById('liste');
         if (!data.success || !data.cours?.length) {
-            container.innerHTML = '<p>Aucun cours pour le moment.</p>';
+            container.innerHTML = '<p class="no-data">Aucun cours pour le moment.</p>';
             return;
         }
 
-        container.innerHTML = '';
-        const grid = document.createElement('div');
-        grid.className = 'cours-grid';
+        allProfCourses = data.cours;
+        renderProfCourses(allProfCourses, container);
 
-        data.cours.forEach(cours => {
-            const card = document.createElement('div');
-            card.className = 'cours-card';
-            card.innerHTML = `
-                <h3>${cours.titre_cours}</h3>
-                <p class="desc">${cours.desc_cours || ''}</p>
-                <div class="meta">
-                    <span>${cours.duree_minutes || 0} min</span>
-                    <span>${cours.prix || 0} Fcfa</span>
-                </div>
-                <div class="meta">
-                    <span>Étudiants: ${cours.total_etudiants || 0}</span>
-                    <span>Note: ${cours.note_moyenne ?? 0}/5</span>
-                </div>
-                <div class="actions">
-                    <button class="btn-small btn-edit" data-id="${cours.id}">Modifier</button>
-                    <button class="btn-small btn-delete" data-id="${cours.id}">Supprimer</button>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-        container.appendChild(grid);
     } catch (e) {
         console.error('❌ ERREUR fetchCoursProf:', e);
-        document.getElementById('liste').innerHTML = '<p>Erreur chargement cours.</p>';
+        document.getElementById('liste').innerHTML = '<p class="no-data">Erreur chargement cours.</p>';
     }
 }
 
+// 📚 Fetch cours étudiant
 async function fetchCoursEtudiant() {
     try {
-        const res = await fetch('/etudiant/tous-cours', { credentials: 'include' }); 
+        const res = await fetch('/cours-list', { credentials: 'include' }); 
         const data = await res.json();
         
-        const container = document.getElementById('etudiant-liste');
+        const explorerContainer = document.getElementById('explorer-liste');
+        const etudiantContainer = document.getElementById('etudiant-liste');
+        
         if (!data.success || !data.cours?.length) {
-            container.innerHTML = '<p>Aucun cours disponible.</p>';
+            explorerContainer.innerHTML = '<p class="no-data">Aucun cours disponible.</p>';
+            etudiantContainer.innerHTML = '<p class="no-data">Aucun cours inscrit.</p>';
             return;
         }
 
-        container.innerHTML = '';
-        const grid = document.createElement('div');
-        grid.className = 'cours-grid';
-
-        data.cours.forEach(cours => {
-            const inscrit = cours.inscrit === 1; // Vérifier si déjà inscrit
-            const card = document.createElement('div');
-            card.className = 'cours-card';
-            card.innerHTML = `
-                <h3>${cours.titre_cours}</h3>
-                <p class="desc">${cours.desc_cours || ''}</p>
-                <div class="meta">
-                    <span>${cours.duree_minutes || 0} min</span>
-                    <span>${cours.prix || 0} Fcfa</span>
-                </div>
-                <div class="meta">
-                    <span>Étudiants: ${cours.total_etudiants || 0}</span>
-                    <span>Note: ${cours.note_moyenne ?? 0}/5</span>
-                </div>
-                <div class="actions">
-                    ${inscrit ? 
-                        '<button class="btn-small btn-success" disabled>Déjà inscrit</button>' : 
-                        `<button class="btn-small btn-primary s-inscrire" data-id="${cours.id}">S'inscrire</button>`
-                    }
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-        container.appendChild(grid);
-
-        // Événements inscription
-        document.querySelectorAll('.s-inscrire').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const coursId = e.target.dataset.id;
-                try {
-                    const res = await fetch(`/etudiant/inscription/${coursId}`, {
-                        method: 'POST',
-                        credentials: 'include'
-                    });
-                    if (res.ok) {
-                        e.target.textContent = 'Inscrit !';
-                        e.target.disabled = true;
-                        e.target.classList.replace('btn-primary', 'btn-success');
-                    }
-                } catch (err) {
-                    alert('Erreur inscription');
-                }
-            });
-        });
+        allExplorerCourses = data.cours;
+        renderExplorerCourses(allExplorerCourses, explorerContainer);
+        renderEtudiantCourses(allExplorerCourses, etudiantContainer);
 
     } catch (e) {
         console.error('❌ ERREUR fetchCoursEtudiant:', e);
-        document.getElementById('etudiant-liste').innerHTML = '<p>Erreur chargement cours.</p>';
+        document.getElementById('explorer-liste').innerHTML = '<p class="no-data">Erreur chargement cours.</p>';
+        document.getElementById('etudiant-liste').innerHTML = '<p class="no-data">Erreur chargement cours.</p>';
     }
+}
+
+// 🎨 Render cours PROF
+function renderProfCourses(coursList, container) {
+    container.innerHTML = '';
+    if (!coursList.length) {
+        container.innerHTML = '<p class="no-data">Aucun cours trouvé.</p>';
+        return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'cours-grid';
+
+    coursList.forEach(cours => {
+        const card = document.createElement('div');
+        card.className = 'cours-card';
+        card.innerHTML = `
+            <h3>${cours.titre_cours}</h3>
+            <p class="desc">${cours.desc_cours || ''}</p>
+            <div class="meta">
+                <span>${cours.duree_minutes || 0} min</span>
+                <span>${cours.prix || 0} Fcfa</span>
+            </div>
+            <div class="meta">
+                <span>Étudiants: ${cours.total_etudiants || 0}</span>
+                <span>Note: ${cours.note_moyenne ?? 0}/5</span>
+            </div>
+            <div class="actions">
+                <button class="btn-small btn-edit" data-id="${cours.id}">
+                    <i class="fas fa-edit"></i> Modifier
+                </button>
+                <button class="btn-small btn-delete" data-id="${cours.id}">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+    container.appendChild(grid);
+}
+
+// 🎨 Render explorer (étudiant)
+function renderExplorerCourses(coursList, container) {
+    container.innerHTML = '';
+    if (!coursList.length) {
+        container.innerHTML = '<p class="no-data">Aucun cours trouvé.</p>';
+        return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'explorer-grid';
+
+    coursList.forEach(cours => {
+        const card = document.createElement('div');
+        card.className = 'explorer-card';
+        card.innerHTML = `
+            <div class="card-header">
+                <div class="rating">
+                    ${generateStars(cours.note_moyenne ?? 0)}
+                    <span class="rating-text">(${cours.note_moyenne ?? 0}/5)</span>
+                </div>
+            </div>
+            <h3 class="course-title">${cours.titre_cours}</h3>
+            <p class="course-desc">${cours.desc_cours || 'Description du cours...'}</p>
+            <div class="course-meta">
+                <div class="prof-info">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>${cours.nom_professeur} ${cours.prenom_professeur}</span>
+                </div>
+                <div class="course-stats">
+                    <span class="duration"><i class="fas fa-clock"></i> ${cours.duree_minutes || 0}min</span>
+                    <span class="price">${formatPrice(cours.prix || 0)} Fcfa</span>
+                    <span class="students"><i class="fas fa-users"></i> ${cours.total_etudiants || 0}</span>
+                </div>
+            </div>
+            <button class="btn-explore" data-id="${cours.id}">
+                <i class="fas fa-play-circle"></i>
+                S'inscrire
+            </button>
+        `;
+        grid.appendChild(card);
+    });
+    container.appendChild(grid);
+}
+
+function renderEtudiantCourses(coursList, container) {
+    container.innerHTML = '';
+    if (!coursList.length) {
+        container.innerHTML = '<p class="no-data">Aucun cours inscrit.</p>';
+        return;
+    }
+    // TODO: Adapter pour "Mes Cours"
+}
+
+function generateStars(rating) {
+    let stars = '';
+    const fullStars = Math.floor(rating);
+    const hasHalf = rating % 1 >= 0.5;
+    
+    for (let i = 0; i < 5; i++) {
+        if (i < fullStars) {
+            stars += '<i class="fas fa-star"></i>';
+        } else if (i === fullStars && hasHalf) {
+            stars += '<i class="fas fa-star-half-alt"></i>';
+        } else {
+            stars += '<i class="far fa-star"></i>';
+        }
+    }
+    return stars;
+}
+
+function formatPrice(price) {
+    return new Intl.NumberFormat('fr-FR').format(price);
+}
+
+// 🔍 FILTRES SIMPLIFIÉS
+function setupFilters() {
+    // ✅ Recherche PROF (sans filtre niveau)
+    const profSearch = document.getElementById('prof-search');
+    if (profSearch) {
+        profSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allProfCourses.filter(cours => 
+                cours.titre_cours.toLowerCase().includes(searchTerm) ||
+                (cours.desc_cours || '').toLowerCase().includes(searchTerm)
+            );
+            renderProfCourses(filtered, document.getElementById('liste'));
+        });
+    }
+
+    // ✅ Recherche + Filtre ÉTUDIANT
+    const explorerSearch = document.getElementById('explorer-search');
+    const explorerNiveau = document.getElementById('explorer-niveau');
+    
+    const applyExplorerFilters = () => {
+        const searchTerm = explorerSearch.value.toLowerCase();
+        const niveau = explorerNiveau.value.toLowerCase();
+        
+        const filtered = allExplorerCourses.filter(cours => {
+            const matchSearch = !searchTerm || 
+                cours.titre_cours.toLowerCase().includes(searchTerm) ||
+                (cours.desc_cours || '').toLowerCase().includes(searchTerm);
+            const matchNiveau = !niveau || 
+                (cours.niveau_nom || '').toLowerCase() === niveau;
+            return matchSearch && matchNiveau;
+        });
+        
+        renderExplorerCourses(filtered, document.getElementById('explorer-liste'));
+    };
+
+    if (explorerSearch) explorerSearch.addEventListener('input', applyExplorerFilters);
+    if (explorerNiveau) explorerNiveau.addEventListener('change', applyExplorerFilters);
 }
 
 function initializeDashboard() {
@@ -334,39 +444,23 @@ function initializeDashboard() {
     showTab(defaultTab);
     showUserInfo(currentUser);
 
-    if (currentUser.roles_id === 1) {
-    const coursTab = document.querySelector('[data-tab="cours"]');
-    if (coursTab && coursTab.classList.contains('active')) {
-        fetchCoursEtudiant();
-    }
-}
+    // ✅ Setup filtres
+    setupFilters();
 
+    // Navigation
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', e => {
             e.preventDefault();
             const tab = link.dataset.tab;
             showTab(tab);
 
-            if (tab === 'cours-crud') {
-                fetchCoursProf();
-            }
-            if (tab === 'cours') {
-    fetchCoursEtudiant();
-}
+            if (tab === 'cours-crud') fetchCoursProf();
+            if (tab === 'explorer' || tab === 'cours') fetchCoursEtudiant();
         });
     });
-
-    if (currentUser.roles_id === 2) {
-        const coursTab = document.getElementById('cours-crud');
-        if (coursTab.style.display !== 'none') {
-            fetchCoursProf();
-        }
-    }
 }
-
 
 document.addEventListener('DOMContentLoaded', fetchUserData);
 </script>
-
 </body>
 </html>

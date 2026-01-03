@@ -29,7 +29,6 @@ module.exports.getNiveaux = (req, res) => {
 
 module.exports.cours = (req, res) => {
     console.log("📤 Route cours POST appelée:", req.body);
-    console.log('SESSION USER AVANT INSERT:', req.session.user);
 
     const { 
         titre_cours, 
@@ -67,7 +66,7 @@ module.exports.cours = (req, res) => {
         `;
 
         const values = [titre_cours, desc_cours, prix, duree_minutes, pre_requis, categories_id, niveau_id, users_id];
-        console.log("🔄 Insertion cours, values =", values);
+        console.log("Insertion cours, values =", values);
 
         db.query(insertSql, values, (insertErr, result) => {
             if (insertErr) {
@@ -81,23 +80,86 @@ module.exports.cours = (req, res) => {
     });
 };
 
+// ✅ CORRECTION - Requête simplifiée avec alias explicite
 module.exports.getCoursProf = (req, res) => {
-  
     const users_id = req.session.user.id;
 
     const sql = `
-        SELECT id, titre_cours, desc_cours, prix, duree_minutes, 
-               date_publication, note_moyenne, total_etudiants
-        FROM cours
-        WHERE users_id = ?
-        ORDER BY date_publication DESC
+        SELECT 
+            c.id, 
+            c.titre_cours, 
+            c.desc_cours, 
+            c.prix, 
+            c.duree_minutes, 
+            c.date_publication, 
+            COALESCE(c.note_moyenne, 0) AS note_moyenne, 
+            COALESCE(c.total_etudiants, 0) AS total_etudiants,
+            c.niveau_id,
+            n.nom AS niveau_nom
+        FROM cours c
+        JOIN niveau n ON c.niveau_id = n.id
+        WHERE c.users_id = ?
+        ORDER BY c.date_publication DESC
     `;
+    
     db.query(sql, [users_id], (err, results) => {
         if (err) {
             console.error('❌ Erreur getCoursProf:', err);
             return res.status(500).json({ success: false, message: 'Erreur BDD cours' });
         }
+        
+        // 🐛 DEBUG - Afficher les résultats complets
+        console.log('✅ Cours prof SQL:', results);
+        console.log('📋 Premier cours complet:', JSON.stringify(results[0], null, 2));
+        
         res.json({ success: true, cours: results });
     });
 };
 
+module.exports.deleteCours = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [result] = await db.query('DELETE FROM cours WHERE id = ?', [id]);
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: 'Cours non trouvé' });
+        }
+        res.status(204).send();
+    } catch (err) {
+        console.error('❌ Erreur deleteCours:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+module.exports.getAllCours = (req, res) => {
+    console.log('📊 API /cours-list appelée');
+    
+    const sql = `
+        SELECT 
+            c.id, 
+            c.titre_cours, 
+            c.desc_cours, 
+            c.prix, 
+            c.duree_minutes,
+            c.date_publication, 
+            COALESCE(c.note_moyenne, 0) AS note_moyenne, 
+            COALESCE(c.total_etudiants, 0) AS total_etudiants,
+            u.nom AS nom_professeur,
+            u.prenom AS prenom_professeur,
+            n.nom AS niveau_nom,
+            0 AS inscrit
+        FROM cours c
+        JOIN users u ON c.users_id = u.id
+        LEFT JOIN niveau n ON c.niveau_id = n.id
+        ORDER BY c.date_publication DESC
+    `;
+    
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('❌ Erreur getAllCours:', err);
+            return res.status(500).json({ success: false, message: 'Erreur BDD' });
+        }
+        console.log('✅ Cours trouvés:', results.length);
+        res.json({ success: true, cours: results });
+    });
+};
+module.exports.inscriptionCours = (req, res) => {};
