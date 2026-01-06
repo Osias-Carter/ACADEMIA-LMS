@@ -75,12 +75,11 @@ module.exports.cours = (req, res) => {
             }
 
             console.log("✅ Cours créé ID:", result.insertId);
-            return res.redirect('/dashboard');
+            return res.redirect('/dashboard?success=cours_created');
         });
     });
 };
 
-// ✅ CORRECTION - Requête simplifiée avec alias explicite
 module.exports.getCoursProf = (req, res) => {
     const users_id = req.session.user.id;
 
@@ -108,7 +107,6 @@ module.exports.getCoursProf = (req, res) => {
             return res.status(500).json({ success: false, message: 'Erreur BDD cours' });
         }
         
-        // 🐛 DEBUG - Afficher les résultats complets
         console.log('✅ Cours prof SQL:', results);
         console.log('📋 Premier cours complet:', JSON.stringify(results[0], null, 2));
         
@@ -116,20 +114,63 @@ module.exports.getCoursProf = (req, res) => {
     });
 };
 
-module.exports.deleteCours = async (req, res) => {
+module.exports.deleteCours = (req, res) => {
     const { id } = req.params;
-    try {
-        const [result] = await db.query('DELETE FROM cours WHERE id = ?', [id]);
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ success: false, message: 'Cours non trouvé' });
-        }
-        res.status(204).send();
-    } catch (err) {
-        console.error('❌ Erreur deleteCours:', err);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-};
+    const users_id = req.session.user.id;
 
+
+        // Supprimer le cours
+        const deleteSql = 'DELETE FROM cours WHERE id = ?';
+        db.query(deleteSql, [id], (deleteErr, result) => {
+            if (deleteErr) {
+                console.error('❌ Erreur delete cours:', deleteErr);
+                return res.status(500).json({ success: false, message: 'Erreur serveur' });
+            }
+
+            console.log('✅ Cours supprimé ID:', id, 'affectedRows:', result.affectedRows);
+            res.status(204).send();
+        });
+    };
+
+    module.exports.updateCours = (req, res) => {
+        const { id } = req.params;
+        const users_id = req.session.user.id;
+        
+        const { 
+        titre_cours, 
+        desc_cours, 
+        prix, 
+        duree_minutes, 
+        pre_requis, 
+        categories_id, 
+        niveau_id
+    } = req.body;
+
+        // Mettre à jour le cours
+        const updateSql = `
+            UPDATE cours 
+            SET titre_cours = ?, 
+                desc_cours = ?, 
+                prix = ?, 
+                duree_minutes = ?, 
+                pre_requis = ?, 
+                categories_id = ?, 
+                niveau_id = ?
+            WHERE id = ?
+        `;
+
+        const values = [titre_cours, desc_cours, prix, duree_minutes, pre_requis, categories_id, niveau_id, id];
+
+        db.query(updateSql, values, (updateErr, result) => {
+            if (updateErr) {
+                console.error('❌ Erreur update cours:', updateErr);
+                return res.status(500).json({ success: false, message: 'Erreur serveur' });
+            }
+
+            console.log('✅ Cours mis à jour ID:', id, 'affectedRows:', result.affectedRows);
+            res.json({ success: true, message: 'Cours mis à jour avec succès' });
+        });
+    };
 module.exports.getAllCours = (req, res) => {
     console.log('📊 API /cours-list appelée');
     
@@ -162,4 +203,5 @@ module.exports.getAllCours = (req, res) => {
         res.json({ success: true, cours: results });
     });
 };
+
 module.exports.inscriptionCours = (req, res) => {};

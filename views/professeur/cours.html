@@ -7,31 +7,48 @@
     <link rel="stylesheet" href="/stylesheets/cours.css">
 </head>
 <body>
+    <!-- 🎨 CONTENEUR PRINCIPAL -->
     <div class="container">
+        <!-- 📝 FORMULAIRE CRÉATION/MODIFICATION COURS -->
         <div class="cours_form">
             <h2>Ajouter un nouveau cours</h2>
-                    <div id="error-container"></div>
+            <!-- 🚨 Zone messages d'erreur -->
+            <div id="error-container"></div>
+            
+            <!-- 📤 FORMULAIRE (POST par défaut, PUT en mode édition) -->
             <form id="cours" action="/professeur/cours" method="post">
+                
+                <!-- 1️⃣ TITRE -->
                 <div class="input-group">
                     <label for="titre_cours">Titre du cours</label>
                     <input type="text" id="titre_cours" name="titre_cours" required>
                 </div>
+
+                <!-- 2️⃣ DESCRIPTION -->
                 <div class="input-group">
                     <label for="desc_cours">Description du cours</label>
                     <textarea id="desc_cours" name="desc_cours" required></textarea>
                 </div>
+
+                <!-- 3️⃣ PRIX -->
                 <div class="input-group">
                     <label for="prix">Prix du cours (Fcfa)</label>
                     <input type="number" id="prix" name="prix" step="0.01" min="0" required>
                 </div>
+
+                <!-- 4️⃣ DURÉE -->
                 <div class="input-group">
                     <label for="duree_minutes">Durée en minutes</label>
                     <input type="number" id="duree_minutes" name="duree_minutes" min="1" required>
                 </div>
+
+                <!-- 5️⃣ PRÉ-REQUIS -->
                 <div class="input-group">
                     <label for="pre_requis">Pré-requis du cours</label>
                     <textarea id="pre_requis" name="pre_requis" required></textarea>
                 </div> 
+
+                <!-- 6️⃣ CATÉGORIE (dropdown chargé dynamiquement) -->
                 <div class="input-group">
                     <label for="categories_id">Catégorie</label>
                     <div class="select">
@@ -40,6 +57,8 @@
                         </select>
                     </div>
                 </div> 
+
+                <!-- 7️⃣ NIVEAU (dropdown chargé dynamiquement) -->
                 <div class="input-group">
                     <label for="niveau_id">Niveau</label>
                     <div class="select">
@@ -48,6 +67,8 @@
                         </select>
                     </div>
                 </div> 
+
+                <!-- 🚀 BOUTON SOUMISSION -->
                 <button type="submit" class="btn">Ajouter le cours</button>
             </form>
         </div>
@@ -56,9 +77,10 @@
     <script>
         async function loadCategories() {
             try {
+
                 const response = await fetch('/categories', {
                     method: 'GET',
-                    credentials: 'include',
+                    credentials: 'include',  
                 });
                 const data = await response.json();
 
@@ -112,24 +134,128 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadCategories);
-        document.addEventListener('DOMContentLoaded', loadNiveaux);
+        const error = new URLSearchParams(window.location.search).get('error');
+        if (error) {
+            const messages = {
+                server_error: "Erreur serveur, réessayez plus tard.",
+                cours_exists: "Nom de cours déja existant.",
+                cours_created: "Cours créé avec succès."
+            };
+            const container = document.getElementById('error-container');
+            container.innerHTML = `<div id="error-message">${messages[error] || "Erreur inconnue."}</div>`;
+        }
 
-    // Récupère le paramètre 'error' dans l'URL 
-    const error = new URLSearchParams(window.location.search).get('error');
-    // Si un paramètre error existe dans l'URL
-    if (error) {
-        // Définition des messages d'erreur selon la valeur de 'error'
-        const messages = {
-            server_error: "Erreur serveur, réessayez plus tard.",
-            cours_exists: "Nom de cours déja existant.",
-        };
-        // Sélection de la div qui contiendra le message d'erreur dans la page
-        const container = document.getElementById('error-container');
+        let isEditMode = false;     
+        let editCoursId = null;     
 
-        // Injection dynamique du message d'erreur dans cette div
-        container.innerHTML = `<div id="error-message">${messages[error] || "Erreur inconnue."}</div>`;
-    }
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('edit');
+
+        if (editId) {
+            console.log('🔄 Mode édition activé pour cours ID:', editId);
+            isEditMode = true;
+            editCoursId = editId;
+        }
+
+        function loadCoursForEdit() {
+            
+            const coursData = sessionStorage.getItem('editCours');
+            
+            if (!coursData) {
+                alert('Erreur : données du cours non trouvées');
+                window.location.href = '/dashboard';
+                return;
+            }
+
+            const cours = JSON.parse(coursData);
+            console.log('📝 Chargement cours pour édition:', cours);
+
+            // CHANGER INTERFACE MODE ÉDITION
+            const pageTitle = document.querySelector('h2');
+            if (pageTitle) {
+                pageTitle.textContent = 'Modifier le cours';  
+            }
+
+            const submitBtn = document.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.textContent = 'Mettre à jour le cours';  // 👈 "Ajouter" → "Mettre à jour"
+            }
+
+            document.getElementById('titre_cours').value = cours.titre_cours || '';
+            document.getElementById('desc_cours').value = cours.desc_cours || '';
+            document.getElementById('prix').value = cours.prix || '';
+            document.getElementById('duree_minutes').value = cours.duree_minutes || '';
+            document.getElementById('pre_requis').value = cours.pre_requis || '';
+
+            setTimeout(() => {
+                document.getElementById('categories_id').value = cours.categories_id || '';
+                document.getElementById('niveau_id').value = cours.niveau_id || '';
+            }, 600);
+
+            sessionStorage.removeItem('editCours');
+        }
+
+        async function updateCours() {
+            // 📦 Collecte toutes les données du formulaire
+            const formData = {
+                titre_cours: document.getElementById('titre_cours').value,
+                desc_cours: document.getElementById('desc_cours').value,
+                prix: parseFloat(document.getElementById('prix').value),
+                duree_minutes: parseInt(document.getElementById('duree_minutes').value),
+                pre_requis: document.getElementById('pre_requis').value,
+                categories_id: parseInt(document.getElementById('categories_id').value),
+                niveau_id: parseInt(document.getElementById('niveau_id').value)
+            };
+
+            console.log('📤 Envoi mise à jour cours ID:', editCoursId);
+            console.log('📦 Données:', formData);
+
+            try {
+                const response = await fetch(`/cours/${editCoursId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'  
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(formData) 
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    console.log('✅ Cours mis à jour avec succès');
+                    alert('✅ Cours mis à jour avec succès !');
+                    window.location.href = '/dashboard';
+                } else {
+                    console.error('❌ Erreur:', data.message);
+                    alert('❌ Erreur : ' + data.message);
+                }
+            } catch (error) {
+                console.error('❌ Erreur mise à jour:', error);
+                alert('❌ Erreur lors de la mise à jour du cours');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategories();
+            loadNiveaux();
+
+            if (isEditMode) {
+                loadCoursForEdit();
+            }
+
+            const form = document.getElementById('cours');
+            
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    if (isEditMode) {
+                        e.preventDefault(); // ❌ Bloque POST normal
+                        console.log('Interception soumission pour modification');
+                        await updateCours(); // ✅ PUT à la place
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
