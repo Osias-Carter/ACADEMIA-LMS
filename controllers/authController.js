@@ -26,7 +26,7 @@ module.exports.showDashboard = (req, res) => {
 
 // REGISTER ÉTUDIANT
 module.exports.register = (req, res) => {
-    console.log("Route register POST appelée");
+    console.log("Route register appelée");
     const { nom, prenom, email, password, tel } = req.body;
 
     const checkSql = "SELECT * FROM users WHERE email = ?";
@@ -64,7 +64,7 @@ module.exports.register = (req, res) => {
 
 // PREGISTER PROFESSEUR
 module.exports.pregister = (req, res) => {
-    console.log("Route pregister POST appelée");
+    console.log("Route pregister appelée");
     const { nom, prenom, email, password, tel } = req.body;
 
     const checkSql = "SELECT * FROM users WHERE email = ?";
@@ -119,7 +119,6 @@ module.exports.login = async (req, res) => {
         const user = results[0];
         const isPasswordMatch = await bcrypt.compare(password, user.password);
 
-        console.log("Résultat compare:", isPasswordMatch);
 
         if (!isPasswordMatch) {
             console.log('Mot de passe incorrect');
@@ -159,8 +158,6 @@ module.exports.plogin = async (req, res) => {
         const user = results[0];
         const isPasswordMatch = await bcrypt.compare(password, user.password);
 
-        console.log("Résultat compare:", isPasswordMatch);
-
         if (!isPasswordMatch) {
             console.log('Mot de passe incorrect');
             return res.redirect("/professeur/plogin?error=invalid_password");
@@ -187,9 +184,20 @@ module.exports.getUserInfo = (req, res) => {
         return res.status(401).json({ success: false, message: 'Non connecté' });
     }
     
-    console.log("✅ User info demandé:", req.session.user);
     res.json({ 
         success: true, 
         user: req.session.user 
+    });
+};
+
+// LOGOUT
+module.exports.logout = (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error("Erreur lors de la déconnexion:", err);
+            return res.status(500).json({ success: false, message: "Erreur serveur" });
+        }
+        res.json({ success: true, message: "Déconnexion réussie" });
+        console.log("Déconnexion réussie")
     });
 };

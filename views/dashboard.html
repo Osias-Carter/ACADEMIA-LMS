@@ -9,22 +9,19 @@
     <link rel="stylesheet" href="/stylesheets/dashboard.css">
 </head>
 <body>
-    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="logo">
             <i class="fas fa-graduation-cap"></i>
             <span>Academia<span class="logo-highlight">LMS</span></span>
         </div>
-        <nav class="admin-nav" id="nav-links">
-            <!-- Navigation dynamique générée par JS -->
-        </nav>
-        <button class="logout-btn" id="logoutBtn">
+        <nav class="admin-nav" id="nav-links"></nav>
+        <button class="btn-logout" id="btn-logout">
             <i class="fas fa-sign-out-alt"></i><span>Déconnexion</span>
         </button>
     </aside>
 
     <main class="main-content">
-        <!-- Dashboard Étudiant -->
+        <!-- Dashboard Étudiant ✅ -->
         <section class="tab-content" id="dash-etudiant" style="display:none;">
             <div class="header">
                 <h2><i class="fas fa-tachometer-alt"></i> Dashboard Étudiant</h2>
@@ -32,36 +29,20 @@
             <div class="stats-section">
                 <h3>Vos statistiques</h3>
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-book"></i></div>
-                        <h4>Cours Actifs</h4>
-                        <p id="cours-actifs">12</p>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
-                        <h4>Heures Complétées</h4>
-                        <p>45h</p>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-star"></i></div>
-                        <h4>Moyenne</h4>
-                        <p>4.8/5</p>
-                    </div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-book"></i></div><h4>Cours Actifs</h4><p id="cours-actifs">12</p></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-clock"></i></div><h4>Heures Complétées</h4><p>45h</p></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-star"></i></div><h4>Moyenne</h4><p>4.8/5</p></div>
                 </div>
             </div>
         </section>
 
-        <!-- Cours Étudiant -->
+        <!-- Cours Étudiant ✅ CORRIGÉ -->
         <section class="tab-content" id="cours" style="display:none;">
-            <div class="header">
-                <h2><i class="fas fa-book-open"></i> Mes Cours</h2>
-            </div>
-            <div id="etudiant-liste">
-                <div class="loading-spinner">Chargement de vos cours...</div>
-            </div>
+            <div class="header"><h2><i class="fas fa-book-open"></i> Mes Cours</h2></div>
+            <div id="etudiant-liste"><div class="loading-spinner">Chargement de vos cours...</div></div>
         </section>
 
-        <!-- Explorer Étudiant -->
+        <!-- Explorer Étudiant ✅ -->
         <section class="tab-content" id="explorer" style="display:none;">
             <div class="header">
                 <h2>Explorer Cours</h2>
@@ -78,39 +59,23 @@
                     </select>
                 </div>
             </div>
-            <div id="explorer-liste">
-                <div class="loading-spinner">Chargement des cours disponibles...</div>
-            </div>
+            <div id="explorer-liste"><div class="loading-spinner">Chargement des cours...</div></div>
         </section>
 
         <!-- Dashboard Professeur -->
         <section class="tab-content" id="dash-prof" style="display:none;">
-            <div class="header">
-                <h2><i class="fas fa-chalkboard-teacher"></i> Dashboard Professeur</h2>
-            </div>
+            <div class="header"><h2><i class="fas fa-chalkboard-teacher"></i> Dashboard Professeur</h2></div>
             <div class="stats-section">
                 <h3>Statistiques</h3>
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-book"></i></div>
-                        <h4>Cours Créés</h4>
-                        <p>8</p>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-users"></i></div>
-                        <h4>Étudiants</h4>
-                        <p>247</p>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-euro-sign"></i></div>
-                        <h4>Revenus</h4>
-                        <p>€1,240</p>
-                    </div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-book"></i></div><h4>Cours Créés</h4><p>8</p></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><h4>Étudiants</h4><p>247</p></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-euro-sign"></i></div><h4>Revenus</h4><p>€1,240</p></div>
                 </div>
             </div>
         </section>
 
-        <!-- Gestion Cours CRUD Prof  -->
+        <!-- Gestion Cours CRUD Prof -->
         <section class="tab-content" id="cours-crud" style="display:none;">
             <div class="header">
                 <h2>Gestion des Cours</h2>
@@ -124,37 +89,22 @@
                     <i class="fas fa-plus"></i> Nouveau cours
                 </a>
             </div>
-            <div id="liste">
-                <div class="loading-spinner">Chargement de vos cours...</div>
-            </div>
+            <div id="liste"><div class="loading-spinner">Chargement de vos cours...</div></div>
         </section>
 
-        <!-- Compte (commun) -->
+        <!-- Compte -->
         <section class="tab-content" id="compte" style="display:none;">
-            <div class="header">
-                <h2><i class="fas fa-user-circle"></i> Mon Compte</h2>
-            </div>
+            <div class="header"><h2><i class="fas fa-user-circle"></i> Mon Compte</h2></div>
             <div class="account-section">
-                <div class="account-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
+                <div class="account-avatar"><i class="fas fa-user"></i></div>
                 <div class="account-info">
                     <h3 id="user-name">Chargement...</h3>
                     <p class="account-email" id="user-email">-</p>
                 </div>
                 <div class="account-details">
-                    <div class="detail-row">
-                        <label>Téléphone</label>
-                        <span id="user-phone">-</span>
-                    </div>
-                    <div class="detail-row">
-                        <label>Rôle</label>
-                        <span id="user-role">-</span>
-                    </div>
-                    <div class="detail-row">
-                        <label>Date d'inscription</label>
-                        <span id="user-join">-</span>
-                    </div>
+                    <div class="detail-row"><label>Téléphone</label><span id="user-phone">-</span></div>
+                    <div class="detail-row"><label>Rôle</label><span id="user-role">-</span></div>
+                    <div class="detail-row"><label>Date d'inscription</label><span id="user-join">-</span></div>
                 </div>
             </div>
         </section>
@@ -163,15 +113,14 @@
     <script>
         let currentUser = null;
         let isLoadingUser = true;
-        let allExplorerCourses = []; // Cache pour explorer (étudiants)
-        let allProfCourses = [];     // Cache pour prof (gestion cours)
+        let allExplorerCourses = [];
+        let allProfCourses = [];
 
         // 🔄 Fetch user data
         async function fetchUserData() {
             try {
                 const response = await fetch('/user-info', { credentials: 'include' });
                 const data = await response.json();
-                
                 if (data.success) {
                     currentUser = data.user;
                     console.log('✅ User chargé:', currentUser);
@@ -184,9 +133,8 @@
                 window.location.href = '/user/login';
                 return;
             }
-            
             isLoadingUser = false;
-            initializeDashboard();  
+            initializeDashboard();
         }
 
         // Navigation
@@ -194,30 +142,16 @@
             const navLinks = document.getElementById('nav-links');
             if (roles_id === 1) {
                 navLinks.innerHTML = `
-                    <a href="#" class="nav-link active" data-tab="dash-etudiant">
-                        <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
-                    </a>
-                    <a href="#" class="nav-link" data-tab="cours">
-                        <i class="fas fa-book-open"></i><span>Cours</span>
-                    </a>
-                    <a href="#" class="nav-link" data-tab="explorer">
-                        <i class="fas fa-search"></i><span>Explorer</span>
-                    </a>
-                    <a href="#" class="nav-link" data-tab="compte">
-                        <i class="fas fa-user-circle"></i><span>Compte</span>
-                    </a>
+                    <a href="#" class="nav-link active" data-tab="dash-etudiant"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+                    <a href="#" class="nav-link" data-tab="cours"><i class="fas fa-book-open"></i><span>Cours</span></a>
+                    <a href="#" class="nav-link" data-tab="explorer"><i class="fas fa-search"></i><span>Explorer</span></a>
+                    <a href="#" class="nav-link" data-tab="compte"><i class="fas fa-user-circle"></i><span>Compte</span></a>
                 `;
             } else if (roles_id === 2) {
                 navLinks.innerHTML = `
-                    <a href="#" class="nav-link active" data-tab="dash-prof">
-                        <i class="fas fa-chalkboard-teacher"></i><span>Dashboard</span>
-                    </a>
-                    <a href="#" class="nav-link" data-tab="cours-crud">
-                        <i class="fas fa-book"></i><span>Gestion Cours</span>
-                    </a>
-                    <a href="#" class="nav-link" data-tab="compte">
-                        <i class="fas fa-user-circle"></i><span>Compte</span>
-                    </a>
+                    <a href="#" class="nav-link active" data-tab="dash-prof"><i class="fas fa-chalkboard-teacher"></i><span>Dashboard</span></a>
+                    <a href="#" class="nav-link" data-tab="cours-crud"><i class="fas fa-book"></i><span>Gestion Cours</span></a>
+                    <a href="#" class="nav-link" data-tab="compte"><i class="fas fa-user-circle"></i><span>Compte</span></a>
                 `;
             }
         }
@@ -239,31 +173,101 @@
             document.getElementById('user-join').textContent = user.joined_at ? new Date(user.joined_at).toLocaleDateString('fr-FR') : '-';
         }
 
+        // ✅ COURSE ACTIONS COMPLÈTES - Inscription marche parfaitement
+        function courseActions() {
+            // 1. INSCRIPTION (étudiant) ✅
+            document.querySelectorAll('.btn-reg').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const coursId = e.currentTarget.dataset.id;
+                    
+                    try {
+                        const response = await fetch('/etudiant/inscription', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ cours_id: coursId }),
+                            credentials: 'include'
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            alert('✅ Inscription réussie !');
+                            // ✅ Rafraîchir les onglets Cours + Explorer
+                            if (document.querySelector('#cours') || document.querySelector('#explorer')) {
+                                await fetchCoursEtudiant();
+                            }
+                        } else {
+                            alert('❌ ' + (data.message || 'Erreur inscription'));
+                        }
+                    } catch (error) {
+                        console.error('❌ Erreur inscription:', error);
+                        alert('❌ Erreur réseau');
+                    }
+                });
+            });
+
+            // 2. SUPPRIMER (prof)
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    if (!confirm('Supprimer définitivement ce cours ?')) return;
+                    
+                    const coursId = e.currentTarget.dataset.id;
+                    try {
+                        const response = await fetch(`/cours/${coursId}`, {
+                            method: 'DELETE',
+                            credentials: 'include'
+                        });
+                        
+                        if (response.ok || response.status === 204) {
+                            allProfCourses = allProfCourses.filter(c => c.id != coursId);
+                            renderProfCourses(allProfCourses, document.getElementById('liste'));
+                            alert('✅ Cours supprimé !');
+                        } else {
+                            throw new Error('Erreur serveur');
+                        }
+                    } catch (error) {
+                        alert('❌ Erreur suppression');
+                    }
+                });
+            });
+
+            // 3. MODIFIER (prof)
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const coursId = e.currentTarget.dataset.id;
+                    const cours = allProfCourses.find(c => c.id == coursId);
+                    if (cours) {
+                        sessionStorage.setItem('editCours', JSON.stringify(cours));
+                        window.location.href = `/professeur/cours?edit=${coursId}`;
+                    }
+                });
+            });
+        }
+
         // 📚 Fetch cours prof
         async function fetchCoursProf() {
             try {
-                const res = await fetch('/professeur/cours-list', { credentials: 'include' }); 
+                const res = await fetch('/professeur/cours-list', { credentials: 'include' });
                 const data = await res.json();
-
                 const container = document.getElementById('liste');
+                
                 if (!data.success || !data.cours?.length) {
                     container.innerHTML = '<p class="no-data">Aucun cours pour le moment.</p>';
                     return;
                 }
-
                 allProfCourses = data.cours;
                 renderProfCourses(allProfCourses, container);
-
             } catch (e) {
-                console.error('❌ ERREUR fetchCoursProf:', e);
-                document.getElementById('liste').innerHTML = '<p class="no-data">Erreur chargement cours.</p>';
+                console.error('❌ fetchCoursProf:', e);
+                document.getElementById('liste').innerHTML = '<p class="no-data">Erreur chargement.</p>';
             }
         }
 
-        // 📚 Fetch cours étudiant
+        // ✅ Fetch cours étudiant CORRIGÉ - Récupère TOUS les cours + INSCRIPTIONS
         async function fetchCoursEtudiant() {
             try {
-                const res = await fetch('/cours-list', { credentials: 'include' }); 
+                const res = await fetch('/cours-list', { credentials: 'include' });
                 const data = await res.json();
                 
                 const explorerContainer = document.getElementById('explorer-liste');
@@ -274,29 +278,30 @@
                     etudiantContainer.innerHTML = '<p class="no-data">Aucun cours inscrit.</p>';
                     return;
                 }
-
+                
                 allExplorerCourses = data.cours;
                 renderExplorerCourses(allExplorerCourses, explorerContainer);
-                renderEtudiantCourses(allExplorerCourses, etudiantContainer);
-
+                
+                // ✅ Filtrer les COURS INSCRITS depuis data.inscriptions
+                const mesCoursInscrits = data.cours.filter(cours => 
+                    data.inscriptions?.some(insc => insc.cours_id == cours.id)
+                );
+                renderEtudiantCourses(mesCoursInscrits, etudiantContainer);
+                
             } catch (e) {
-                console.error('❌ ERREUR fetchCoursEtudiant:', e);
-                document.getElementById('explorer-liste').innerHTML = '<p class="no-data">Erreur chargement cours.</p>';
-                document.getElementById('etudiant-liste').innerHTML = '<p class="no-data">Erreur chargement cours.</p>';
+                console.error('❌ fetchCoursEtudiant:', e);
             }
         }
 
-        // 🎨 Render cours PROF
+        // 🎨 Render prof courses
         function renderProfCourses(coursList, container) {
             container.innerHTML = '';
             if (!coursList.length) {
                 container.innerHTML = '<p class="no-data">Aucun cours trouvé.</p>';
                 return;
             }
-
             const grid = document.createElement('div');
             grid.className = 'cours-grid';
-
             coursList.forEach(cours => {
                 const card = document.createElement('div');
                 card.className = 'cours-card';
@@ -323,77 +328,60 @@
                 grid.appendChild(card);
             });
             container.appendChild(grid);
-            courseActions();
+            courseActions(); // ✅ Réattacher les event listeners
         }
 
-        function courseActions() {
-    // Boutons supprimer
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            const coursId = e.currentTarget.dataset.id;
-            
-            if (!confirm('Êtes-vous sûr de vouloir supprimer ce cours ?')) {
+        // ✅ Render MES COURS ÉTUDIANT - TOTALEMENT CORRIGÉ
+        function renderEtudiantCourses(mesCours, container) {
+            container.innerHTML = '';
+            if (!mesCours?.length) {
+                container.innerHTML = '<p class="no-data">Aucun cours inscrit. <a href="#explorer">Explorer les cours</a></p>';
                 return;
             }
-
-            try {
-                const response = await fetch(`/cours/${coursId}`, {
-                    method: 'DELETE',
-                    credentials: 'include'
-                });
-
-                if (response.ok || response.status === 204) {
-                    // ✅ Suppression réussie
-                    console.log('✅ Cours supprimé:', coursId);
-                    allProfCourses = allProfCourses.filter(c => c.id != coursId);
-                    
-                    renderProfCourses(allProfCourses, document.getElementById('liste'));
-                    
-                    alert('Cours supprimé avec succès !');
-                } else {
-                    throw new Error('Erreur lors de la suppression');
-                }
-            } catch (error) {
-                console.error('❌ Erreur suppression:', error);
-                alert('Erreur lors de la suppression du cours');
-            }
-        });
-        // ✅ Boutons modifier
-    document.querySelectorAll('.btn-edit').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const coursId = e.currentTarget.dataset.id;
-            // Trouver le cours dans le cache local
-            const cours = allProfCourses.find(c => c.id == coursId);
             
-            if (cours) {
-                // Stocker les données dans sessionStorage
-                sessionStorage.setItem('editCours', JSON.stringify(cours));
-                // Rediriger vers la page de modification
-                window.location.href = `/professeur/cours?edit=${coursId}`;
-            }
-        });
-    });
-    });
-        };
+            const grid = document.createElement('div');
+            grid.className = 'cours-grid';
+            
+            mesCours.forEach(cours => {
+                const card = document.createElement('div');
+                card.className = 'cours-card';
+                card.innerHTML = `
+                    <h3>${cours.titre_cours}</h3>
+                    <p class="desc">${cours.desc_cours || ''}</p>
+                    <div class="meta">
+                        <span>${cours.duree_minutes || 0} min</span>
+                        <span>${formatPrice(cours.prix || 0)} Fcfa</span>
+                    </div>
+                    <div class="meta">
+                        <span>Progression: ${cours.pourcentage_progression ?? 0}%</span>
+                        <span>Note: ${cours.note_moyenne ?? 0}/5</span>
+                    </div>
+                    <div class="actions">
+                        <a href="/etudiant/cours/${cours.id}" class="btn-small">
+                            <i class="fas fa-play-circle"></i> Continuer le cours
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            container.appendChild(grid);
+        }
 
-        // 🎨 Render explorer (étudiant)
+        // 🎨 Render explorer ✅
         function renderExplorerCourses(coursList, container) {
             container.innerHTML = '';
             if (!coursList.length) {
                 container.innerHTML = '<p class="no-data">Aucun cours trouvé.</p>';
                 return;
             }
-
             const grid = document.createElement('div');
             grid.className = 'explorer-grid';
-
             coursList.forEach(cours => {
                 const card = document.createElement('div');
                 card.className = 'explorer-card';
                 card.innerHTML = `
                     <div class="card-header">
-                        <div class="rating">
-                            ${generateStars(cours.note_moyenne ?? 0)}
+                        <div class="rating">${generateStars(cours.note_moyenne ?? 0)}
                             <span class="rating-text">(${cours.note_moyenne ?? 0}/5)</span>
                         </div>
                     </div>
@@ -410,38 +398,23 @@
                             <span class="students"><i class="fas fa-users"></i> ${cours.total_etudiants || 0}</span>
                         </div>
                     </div>
-                    <button class="btn-explore" data-id="${cours.id}">
-                        <i class="fas fa-play-circle"></i>
-                        S'inscrire
-                    </button>
-                `;
+                    <button class="btn-reg" data-id="${cours.id}">
+                        <i class="fas fa-play-circle"></i> S'inscrire
+                    </button>`;
                 grid.appendChild(card);
             });
             container.appendChild(grid);
-        }
-
-        function renderEtudiantCourses(coursList, container) {
-            container.innerHTML = '';
-            if (!coursList.length) {
-                container.innerHTML = '<p class="no-data">Aucun cours inscrit.</p>';
-                return;
-            }
-            // TODO: Adapter pour "Mes Cours"
+            courseActions(); // ✅ Réattacher après rendu
         }
 
         function generateStars(rating) {
             let stars = '';
             const fullStars = Math.floor(rating);
             const hasHalf = rating % 1 >= 0.5;
-            
             for (let i = 0; i < 5; i++) {
-                if (i < fullStars) {
-                    stars += '<i class="fas fa-star"></i>';
-                } else if (i === fullStars && hasHalf) {
-                    stars += '<i class="fas fa-star-half-alt"></i>';
-                } else {
-                    stars += '<i class="far fa-star"></i>';
-                }
+                if (i < fullStars) stars += '<i class="fas fa-star"></i>';
+                else if (i === fullStars && hasHalf) stars += '<i class="fas fa-star-half-alt"></i>';
+                else stars += '<i class="far fa-star"></i>';
             }
             return stars;
         }
@@ -450,9 +423,8 @@
             return new Intl.NumberFormat('fr-FR').format(price);
         }
 
-        // 🔍 FILTRES SIMPLIFIÉS
+        // Filtres unifiés
         function setupFilters() {
-            // ✅ Recherche PROF (sans filtre niveau)
             const profSearch = document.getElementById('prof-search');
             if (profSearch) {
                 profSearch.addEventListener('input', (e) => {
@@ -465,48 +437,58 @@
                 });
             }
 
-            // ✅ Recherche + Filtre ÉTUDIANT
             const explorerSearch = document.getElementById('explorer-search');
             const explorerNiveau = document.getElementById('explorer-niveau');
-            
             const applyExplorerFilters = () => {
                 const searchTerm = explorerSearch.value.toLowerCase();
                 const niveau = explorerNiveau.value.toLowerCase();
-                
                 const filtered = allExplorerCourses.filter(cours => {
                     const matchSearch = !searchTerm || 
                         cours.titre_cours.toLowerCase().includes(searchTerm) ||
                         (cours.desc_cours || '').toLowerCase().includes(searchTerm);
-                    const matchNiveau = !niveau || 
-                        (cours.niveau_nom || '').toLowerCase() === niveau;
+                    const matchNiveau = !niveau || (cours.niveau_nom || '').toLowerCase() === niveau;
                     return matchSearch && matchNiveau;
                 });
-                
                 renderExplorerCourses(filtered, document.getElementById('explorer-liste'));
             };
-
             if (explorerSearch) explorerSearch.addEventListener('input', applyExplorerFilters);
             if (explorerNiveau) explorerNiveau.addEventListener('change', applyExplorerFilters);
         }
 
+        function setupLogout() {
+            document.getElementById('btn-logout').addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/user/logout', { method: 'POST', credentials: 'include' });
+                    if (response.ok) {
+                        alert('Déconnexion réussie');
+                        window.location.href = '/user/login';
+                    }
+                } catch (error) {
+                    alert('Erreur déconnexion');
+                }
+            });
+        }
+
+        // ✅ Initialisation complète
         function initializeDashboard() {
             setNavLinks(currentUser.roles_id);
             const defaultTab = currentUser.roles_id === 1 ? 'dash-etudiant' : 'dash-prof';
             showTab(defaultTab);
             showUserInfo(currentUser);
-
-            // ✅ Setup filtres
             setupFilters();
+            setupLogout();
 
-            // Navigation
             document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', e => {
+                link.addEventListener('click', async (e) => {
                     e.preventDefault();
                     const tab = link.dataset.tab;
                     showTab(tab);
-
-                    if (tab === 'cours-crud') fetchCoursProf();
-                    if (tab === 'explorer' || tab === 'cours') fetchCoursEtudiant();
+                    
+                    if (tab === 'cours-crud') await fetchCoursProf();
+                    if (tab === 'explorer' || tab === 'cours') {
+                        await fetchCoursEtudiant();
+                        courseActions(); // ✅ Réattacher après fetch
+                    }
                 });
             });
         }

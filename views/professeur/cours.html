@@ -7,48 +7,37 @@
     <link rel="stylesheet" href="/stylesheets/cours.css">
 </head>
 <body>
-    <!-- 🎨 CONTENEUR PRINCIPAL -->
     <div class="container">
-        <!-- 📝 FORMULAIRE CRÉATION/MODIFICATION COURS -->
         <div class="cours_form">
             <h2>Ajouter un nouveau cours</h2>
-            <!-- 🚨 Zone messages d'erreur -->
             <div id="error-container"></div>
-            
-            <!-- 📤 FORMULAIRE (POST par défaut, PUT en mode édition) -->
             <form id="cours" action="/professeur/cours" method="post">
                 
-                <!-- 1️⃣ TITRE -->
                 <div class="input-group">
                     <label for="titre_cours">Titre du cours</label>
                     <input type="text" id="titre_cours" name="titre_cours" required>
                 </div>
 
-                <!-- 2️⃣ DESCRIPTION -->
                 <div class="input-group">
                     <label for="desc_cours">Description du cours</label>
                     <textarea id="desc_cours" name="desc_cours" required></textarea>
                 </div>
 
-                <!-- 3️⃣ PRIX -->
                 <div class="input-group">
                     <label for="prix">Prix du cours (Fcfa)</label>
                     <input type="number" id="prix" name="prix" step="0.01" min="0" required>
                 </div>
 
-                <!-- 4️⃣ DURÉE -->
                 <div class="input-group">
                     <label for="duree_minutes">Durée en minutes</label>
                     <input type="number" id="duree_minutes" name="duree_minutes" min="1" required>
                 </div>
 
-                <!-- 5️⃣ PRÉ-REQUIS -->
                 <div class="input-group">
                     <label for="pre_requis">Pré-requis du cours</label>
                     <textarea id="pre_requis" name="pre_requis" required></textarea>
                 </div> 
 
-                <!-- 6️⃣ CATÉGORIE (dropdown chargé dynamiquement) -->
                 <div class="input-group">
                     <label for="categories_id">Catégorie</label>
                     <div class="select">
@@ -58,7 +47,6 @@
                     </div>
                 </div> 
 
-                <!-- 7️⃣ NIVEAU (dropdown chargé dynamiquement) -->
                 <div class="input-group">
                     <label for="niveau_id">Niveau</label>
                     <div class="select">
@@ -68,7 +56,6 @@
                     </div>
                 </div> 
 
-                <!-- 🚀 BOUTON SOUMISSION -->
                 <button type="submit" class="btn">Ajouter le cours</button>
             </form>
         </div>
@@ -178,7 +165,7 @@
 
             const submitBtn = document.querySelector('button[type="submit"]');
             if (submitBtn) {
-                submitBtn.textContent = 'Mettre à jour le cours';  // 👈 "Ajouter" → "Mettre à jour"
+                submitBtn.textContent = 'Mettre à jour le cours';  
             }
 
             document.getElementById('titre_cours').value = cours.titre_cours || '';

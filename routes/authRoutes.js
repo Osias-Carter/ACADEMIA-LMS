@@ -41,6 +41,7 @@ router.post("/user/register", authController.register);
 router.post("/professeur/pregister", authController.pregister);
 router.post("/professeur/plogin", authController.plogin);
 router.post("/user/login", authController.login);
+router.post("/user/logout", authController.logout);
 
 router.get('/getUserSession', (req, res) => {
     if (!req.session.user) return res.status(401).json({ error: 'Non connecté' });

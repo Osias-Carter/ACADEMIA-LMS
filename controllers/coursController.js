@@ -6,6 +6,7 @@ module.exports.showCours = (req, res) => {
 };
 
 module.exports.getCategories = (req, res) => {
+    console.log("Route getCategories appelée")
     const sql = 'SELECT id, nom_cat, desc_cat FROM categories ORDER BY nom_cat';
     db.query(sql, (err, results) => {
         if (err) {
@@ -17,6 +18,7 @@ module.exports.getCategories = (req, res) => {
 };
 
 module.exports.getNiveaux = (req, res) => {
+    console.log("Route getNiveaux appelée")
     const sql = 'SELECT id, nom FROM niveau ORDER BY nom';
     db.query(sql, (err, results) => {
         if (err) {
@@ -28,7 +30,7 @@ module.exports.getNiveaux = (req, res) => {
 };
 
 module.exports.cours = (req, res) => {
-    console.log("📤 Route cours POST appelée:", req.body);
+    console.log("📤 Route de création des cours appelée:");
 
     const { 
         titre_cours, 
@@ -66,7 +68,7 @@ module.exports.cours = (req, res) => {
         `;
 
         const values = [titre_cours, desc_cours, prix, duree_minutes, pre_requis, categories_id, niveau_id, users_id];
-        console.log("Insertion cours, values =", values);
+        console.log("Insertion cours", values);
 
         db.query(insertSql, values, (insertErr, result) => {
             if (insertErr) {
@@ -108,29 +110,41 @@ module.exports.getCoursProf = (req, res) => {
         }
         
         console.log('✅ Cours prof SQL:', results);
-        console.log('📋 Premier cours complet:', JSON.stringify(results[0], null, 2));
+        console.log('📋 Premier cours:', JSON.stringify(results[0], null, 2));
         
         res.json({ success: true, cours: results });
     });
 };
 
-module.exports.deleteCours = (req, res) => {
-    const { id } = req.params;
+module.exports.getCoursEtudiant = (req, res) => {
     const users_id = req.session.user.id;
 
+    const sql = `
+        SELECT 
+            i.id AS inscription_id,
+            i.date_completion AS date_completion, 
+            i.date_inscription AS date_inscription, 
+            COALESCE(i.pourcentage_progression, 0) AS pourcentage_progression
+        FROM inscription i
+        JOIN cours c ON i.cours_id = c.id
+        WHERE i.users_id = ?
+        ORDER BY i.date_inscription. DESC
+    `;
+    
+    db.query(sql, [users_id], (err, results) => {
+        if (err) {
+            console.error('❌ Erreur getCoursEtudiant:', err);
+            return res.status(500).json({ success: false, message: 'Erreur BDD cours' });
+        }
+        
+        console.log('✅ Cours Etudiant SQL:', results);
+        console.log('📋 Premier cours:', JSON.stringify(results[0], null, 2));
+        
+        res.json({ success: true, cours: results });
+    });
+};
 
-        // Supprimer le cours
-        const deleteSql = 'DELETE FROM cours WHERE id = ?';
-        db.query(deleteSql, [id], (deleteErr, result) => {
-            if (deleteErr) {
-                console.error('❌ Erreur delete cours:', deleteErr);
-                return res.status(500).json({ success: false, message: 'Erreur serveur' });
-            }
 
-            console.log('✅ Cours supprimé ID:', id, 'affectedRows:', result.affectedRows);
-            res.status(204).send();
-        });
-    };
 
     module.exports.updateCours = (req, res) => {
         const { id } = req.params;
@@ -204,4 +218,67 @@ module.exports.getAllCours = (req, res) => {
     });
 };
 
-module.exports.inscriptionCours = (req, res) => {};
+
+module.exports.inscriptionCours = (req, res) => {
+    console.log("📥 Inscription appelée", req.body);
+    
+    if (!req.session.user || !req.session.user.id) {
+        return res.status(401).json({ success: false, message: 'Non connecté' });
+    }
+    
+    const users_id = req.session.user.id;
+    const { cours_id } = req.body;
+    
+    if (!cours_id) {
+        return res.status(400).json({ success: false, message: 'ID cours manquant' });
+    }
+
+    // Vérifier si déjà inscrit
+    const checkSql = `SELECT id FROM inscriptions WHERE users_id = ? AND cours_id = ?`;
+    db.query(checkSql, [users_id, cours_id], (err, results) => {
+        if (err) {
+            console.error('❌ Erreur check inscription:', err);
+            return res.status(500).json({ success: false, message: 'Erreur BDD' });
+        }
+        
+        if (results.length > 0) {
+            return res.json({ success: false, message: 'Déjà inscrit à ce cours' });
+        }
+        
+        // Insérer inscription
+        const insertSql = `INSERT INTO inscriptions (date_inscription, date_completion, pourcentage_progression, users_id, cours_id) 
+                          VALUES (NOW(), NULL, 0, ?, ?)`;
+        db.query(insertSql, [users_id, cours_id], (err, result) => {
+            if (err) {
+                console.error('❌ Erreur insert inscription:', err);
+                return res.status(500).json({ success: false, message: 'Erreur inscription' });
+            }
+            console.log('✅ Inscrit:', users_id, '→ cours:', cours_id);
+            res.json({ success: true, message: 'Inscription réussie !' });
+        });
+    });
+};
+
+// Corriger deleteCours et updateCours avec vérification propriétaire
+module.exports.deleteCours = (req, res) => {
+    const { id } = req.params;
+    const users_id = req.session.user?.id;
+    
+    if (!users_id) return res.status(401).json({ success: false, message: 'Non connecté' });
+
+    const checkSql = 'SELECT id FROM cours WHERE id = ? AND users_id = ?';
+    db.query(checkSql, [id, users_id], (err, results) => {
+        if (err || !results.length) {
+            return res.status(403).json({ success: false, message: 'Accès refusé' });
+        }
+        
+        const deleteSql = 'DELETE FROM cours WHERE id = ?';
+        db.query(deleteSql, [id], (deleteErr) => {
+            if (deleteErr) {
+                console.error('❌ Erreur delete:', deleteErr);
+                return res.status(500).json({ success: false, message: 'Erreur serveur' });
+            }
+            res.status(204).send();
+        });
+    });
+};

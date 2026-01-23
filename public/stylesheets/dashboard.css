@@ -113,7 +113,7 @@ body {
     border: 1px solid rgba(255,255,255,0.3);
 }
 
-.logout-btn {
+.btn-logout {
     margin-top: auto;
     padding: 20px 32px;
     color: #ff6b9d;
@@ -134,7 +134,7 @@ body {
     width: calc(100% - 64px);
 }
 
-.logout-btn:hover {
+.btn-logout:hover {
     background: rgba(255, 107, 157, 0.25);
     color: #ff4757;
     transform: translateX(-50%) translateY(-2px);
@@ -485,7 +485,7 @@ body {
     font-size: 16px !important;
 }
 
-.btn-explore {
+.btn-reg {
     width: 100%;
     padding: 16px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -503,7 +503,7 @@ body {
     margin-top: auto;
 }
 
-.btn-explore:hover {
+.btn-reg:hover {
     transform: translateY(-2px);
     box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
 }
@@ -815,4 +815,35 @@ body {
 .notification.error {
     background: linear-gradient(135deg, #ff6b9d, #ff4757);
     color: white;
+}
+.inscription-form {
+    margin: 0;
+    display: block;
+    width: 100%;
+}
+
+.btn-inscription {
+    width: 100%;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-inscription:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-inscription:active {
+    transform: translateY(0);
 }
