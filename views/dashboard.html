@@ -36,10 +36,10 @@
             </div>
         </section>
 
-        <!-- Cours Étudiant ✅ CORRIGÉ -->
+        <!-- Cours Étudiant  -->
         <section class="tab-content" id="cours" style="display:none;">
             <div class="header"><h2><i class="fas fa-book-open"></i> Mes Cours</h2></div>
-            <div id="etudiant-liste"><div class="loading-spinner">Chargement de vos cours...</div></div>
+            <div id="liste-etudiant"><div class="loading-spinner">Chargement de vos cours...</div></div>
         </section>
 
         <!-- Explorer Étudiant ✅ -->
@@ -193,7 +193,6 @@
                         
                         if (data.success) {
                             alert('✅ Inscription réussie !');
-                            // ✅ Rafraîchir les onglets Cours + Explorer
                             if (document.querySelector('#cours') || document.querySelector('#explorer')) {
                                 await fetchCoursEtudiant();
                             }
@@ -264,35 +263,45 @@
             }
         }
 
-        // ✅ Fetch cours étudiant CORRIGÉ - Récupère TOUS les cours + INSCRIPTIONS
+        // ✅ Fetch cours étudiant  - Récupère TOUS les cours + INSCRIPTIONS
         async function fetchCoursEtudiant() {
+            try {
+             const res = await fetch('/etudiant/cours-list', { credentials: 'include' });
+                const data = await res.json();
+                const container = document.getElementById('liste-etudiant');
+                
+                if (!data.success || !data.inscriptions?.length) {
+                    container.innerHTML = '<p class="no-data">Aucun cours inscrit pour le moment.</p>';
+                    return;
+                }
+                allEtudiantCourses = data.inscriptions;
+                renderEtudiantCourses(allEtudiantCourses, container);
+            } catch (e) {
+                console.error('❌ fetchCoursEtudiant:', e);
+                document.getElementById('liste-etudiant').innerHTML = '<p class="no-data">Erreur chargement.</p>';
+            }
+
+        }
+
+        async function fetchCours() {
             try {
                 const res = await fetch('/cours-list', { credentials: 'include' });
                 const data = await res.json();
                 
                 const explorerContainer = document.getElementById('explorer-liste');
-                const etudiantContainer = document.getElementById('etudiant-liste');
                 
                 if (!data.success || !data.cours?.length) {
                     explorerContainer.innerHTML = '<p class="no-data">Aucun cours disponible.</p>';
-                    etudiantContainer.innerHTML = '<p class="no-data">Aucun cours inscrit.</p>';
                     return;
                 }
                 
                 allExplorerCourses = data.cours;
                 renderExplorerCourses(allExplorerCourses, explorerContainer);
-                
-                // ✅ Filtrer les COURS INSCRITS depuis data.inscriptions
-                const mesCoursInscrits = data.cours.filter(cours => 
-                    data.inscriptions?.some(insc => insc.cours_id == cours.id)
-                );
-                renderEtudiantCourses(mesCoursInscrits, etudiantContainer);
-                
+                              
             } catch (e) {
-                console.error('❌ fetchCoursEtudiant:', e);
+                console.error('❌ fetchCours:', e);
             }
         }
-
         // 🎨 Render prof courses
         function renderProfCourses(coursList, container) {
             container.innerHTML = '';
@@ -331,7 +340,7 @@
             courseActions(); // ✅ Réattacher les event listeners
         }
 
-        // ✅ Render MES COURS ÉTUDIANT - TOTALEMENT CORRIGÉ
+        // ✅ Render MES COURS ÉTUDIANT 
         function renderEtudiantCourses(mesCours, container) {
             container.innerHTML = '';
             if (!mesCours?.length) {
@@ -374,6 +383,7 @@
                 container.innerHTML = '<p class="no-data">Aucun cours trouvé.</p>';
                 return;
             }
+
             const grid = document.createElement('div');
             grid.className = 'explorer-grid';
             coursList.forEach(cours => {
@@ -406,7 +416,7 @@
             container.appendChild(grid);
             courseActions(); // ✅ Réattacher après rendu
         }
-
+        
         function generateStars(rating) {
             let stars = '';
             const fullStars = Math.floor(rating);
@@ -478,6 +488,7 @@
             setupFilters();
             setupLogout();
 
+
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', async (e) => {
                     e.preventDefault();
@@ -486,7 +497,9 @@
                     
                     if (tab === 'cours-crud') await fetchCoursProf();
                     if (tab === 'explorer' || tab === 'cours') {
-                        await fetchCoursEtudiant();
+                        await 
+                        fetchCours();
+                        fetchCoursEtudiant();
                         courseActions(); // ✅ Réattacher après fetch
                     }
                 });

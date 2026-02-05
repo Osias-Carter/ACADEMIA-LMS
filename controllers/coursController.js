@@ -125,10 +125,10 @@ module.exports.getCoursEtudiant = (req, res) => {
             i.date_completion AS date_completion, 
             i.date_inscription AS date_inscription, 
             COALESCE(i.pourcentage_progression, 0) AS pourcentage_progression
-        FROM inscription i
+        FROM inscriptions i
         JOIN cours c ON i.cours_id = c.id
         WHERE i.users_id = ?
-        ORDER BY i.date_inscription. DESC
+        ORDER BY i.date_inscription DESC
     `;
     
     db.query(sql, [users_id], (err, results) => {
@@ -140,10 +140,9 @@ module.exports.getCoursEtudiant = (req, res) => {
         console.log('✅ Cours Etudiant SQL:', results);
         console.log('📋 Premier cours:', JSON.stringify(results[0], null, 2));
         
-        res.json({ success: true, cours: results });
+        res.json({ success: true, inscriptions: results });
     });
 };
-
 
 
     module.exports.updateCours = (req, res) => {

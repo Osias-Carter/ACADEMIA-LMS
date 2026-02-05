@@ -17,7 +17,7 @@ router.get('/dashboard', (req, res) => {
 
 router.get('/cours-list', coursController.getAllCours);           
 router.get('/professeur/cours-list', coursController.getCoursProf);  
-
+router.get('/etudiant/cours-list', coursController.getCoursEtudiant);
 // API CRUD
 router.post('/etudiant/inscription', coursController.inscriptionCours);
 router.post('/professeur/cours', coursController.cours);
