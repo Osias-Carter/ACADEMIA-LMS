@@ -201,3 +201,27 @@ module.exports.logout = (req, res) => {
         console.log("Déconnexion réussie")
     });
 };
+
+module.exports.updateUser = (req, res) => {
+    const userId = req.session.user.id;
+    const { nom, prenom, tel } = req.body;
+
+    if (!nom || !prenom || !tel ) {
+        return res.status(400).json({ success: false, message: "Tous les champs sont réquis" });
+    }
+
+    const sql = "UPDATE users SET nom = ?, prenom = ?, tel = ? WHERE id = ?";
+    db.query(sql, [nom, prenom, tel, userId], (err, result) => {
+        if (err) {
+            console.error("❌ Erreur update user:", err);
+            return res.status(500).json({ success: false, message: "Erreur serveur" });
+        }
+        
+        // 💡 Important : Mettre à jour la session pour que les changements soient visibles partout
+        req.session.user.nom = nom;
+        req.session.user.prenom = prenom;
+        req.session.user.tel = tel;
+
+        res.json({ success: true, message: "Profil mis à jour !" });
+    });
+};

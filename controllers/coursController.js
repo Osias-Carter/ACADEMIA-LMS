@@ -264,7 +264,7 @@ module.exports.inscriptionCours = (req, res) => {
     });
 };
 
-// Corriger deleteCours et updateCours avec vérification propriétaire
+
 module.exports.deleteCours = (req, res) => {
     const { id } = req.params;
     const users_id = req.session.user?.id;

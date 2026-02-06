@@ -93,9 +93,10 @@
         </section>
 
         <!-- Compte -->
-        <section class="tab-content" id="compte" style="display:none;">
-            <div class="header"><h2><i class="fas fa-user-circle"></i> Mon Compte</h2></div>
-            <div class="account-section">
+    <section class="tab-content" id="compte" style="display:none;">
+        <div class="header"><h2><i class="fas fa-user-circle"></i> Mon Compte</h2></div>
+        <div class="account-section">
+            <div id="view-profile">
                 <div class="account-avatar"><i class="fas fa-user"></i></div>
                 <div class="account-info">
                     <h3 id="user-name">Chargement...</h3>
@@ -106,8 +107,22 @@
                     <div class="detail-row"><label>Rôle</label><span id="user-role">-</span></div>
                     <div class="detail-row"><label>Date d'inscription</label><span id="user-join">-</span></div>
                 </div>
+                <button class="add-course-btn" onclick="toggleEditProfile(true)" style="margin-top: 20px; width: 100%;">
+                    <i class="fas fa-edit"></i> Modifier mon profil
+                </button>
             </div>
-        </section>
+
+            <form id="form-edit-profile" style="display:none;" class="account-details">
+                <div class="detail-row"><label>Nom</label><input type="text" id="edit-nom" class="search-input"></div>
+                <div class="detail-row"><label>Prénom</label><input type="text" id="edit-prenom" class="search-input"></div>
+                <div class="detail-row"><label>Téléphone</label><input type="text" id="edit-tel" class="search-input"></div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="add-course-btn" style="background: #27ae60;">Enregistrer</button>
+                    <button type="button" class="add-course-btn" style="background: #e74c3c;" onclick="toggleEditProfile(false)">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </section>
     </main>
 
     <script>
@@ -171,6 +186,7 @@
             document.getElementById('user-phone').textContent = user.tel || '-';
             document.getElementById('user-role').textContent = user.roles_id === 1 ? 'Étudiant' : 'Professeur';
             document.getElementById('user-join').textContent = user.joined_at ? new Date(user.joined_at).toLocaleDateString('fr-FR') : '-';
+
         }
 
         // ✅ COURSE ACTIONS COMPLÈTES - Inscription marche parfaitement
@@ -242,6 +258,18 @@
                     }
                 });
             });
+            // 4. MODIFICATION USER INFO
+            // document.querySelectorAll('.btn--edit').forEach(btn => {
+            //     btn.addEventListener('click', (e) => {
+            //         const usersId = e.currentTarget.dataset.id;
+            //         const user = allUsers.find(u => u.id == usersId);
+            //          if (users) {
+            //             sessionStorage.setItem('editUsers', JSON.stringify(user));
+            //             window.location.href = `/users?edit=${usersId}`;
+            //         }
+                    
+            //     })
+            // })
         }
 
         // 📚 Fetch cours prof
@@ -375,6 +403,56 @@
             });
             container.appendChild(grid);
         }
+
+        //Update du user
+        function toggleEditProfile(show) {
+            document.getElementById('view-profile').style.display = show ? 'none' : 'block';
+            document.getElementById('form-edit-profile').style.display = show ? 'block' : 'none';
+            
+            if (show) {
+                document.getElementById('edit-nom').value = currentUser.nom;
+                document.getElementById('edit-prenom').value = currentUser.prenom;
+                document.getElementById('edit-tel').value = currentUser.tel || '';
+            }
+        }
+
+        // Gérer la soumission du formulaire
+        document.getElementById('form-edit-profile').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const updatedData = {
+        nom: document.getElementById('edit-nom').value,
+        prenom: document.getElementById('edit-prenom').value,
+        tel: document.getElementById('edit-tel').value
+    };
+
+    try {
+        // CORRECTION ICI : Ajout de method, headers et body
+        const response = await fetch('/user/update', { 
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedData),
+            credentials: 'include' 
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('✅ Profil mis à jour !');
+            currentUser.nom = updatedData.nom;
+            currentUser.prenom = updatedData.prenom;
+            currentUser.tel = updatedData.tel;
+            
+            showUserInfo(currentUser);
+            toggleEditProfile(false);
+        } else {
+            alert('❌ Erreur: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('❌ Erreur réseau ou réponse serveur invalide');
+    }
+});
 
         // 🎨 Render explorer ✅
         function renderExplorerCourses(coursList, container) {

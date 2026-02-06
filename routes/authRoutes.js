@@ -50,4 +50,6 @@ router.get('/getUserSession', (req, res) => {
     console.log("routes true");
 });
 
+router.put("/user/update", authController.updateUser);
+
 module.exports = router;
