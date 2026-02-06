@@ -124,6 +124,11 @@ module.exports.getCoursEtudiant = (req, res) => {
             i.id AS inscription_id,
             i.date_completion AS date_completion, 
             i.date_inscription AS date_inscription, 
+            c.titre_cours,
+            c.desc_cours,
+            c.prix,
+            c.note_moyenne,
+            c.duree_minutes,
             COALESCE(i.pourcentage_progression, 0) AS pourcentage_progression
         FROM inscriptions i
         JOIN cours c ON i.cours_id = c.id
@@ -131,6 +136,7 @@ module.exports.getCoursEtudiant = (req, res) => {
         ORDER BY i.date_inscription DESC
     `;
     
+    // c.titre_cours,c.desc_cours,c.prix,c.pourcentage,c.note_moyenne,c.duree_minutes
     db.query(sql, [users_id], (err, results) => {
         if (err) {
             console.error('❌ Erreur getCoursEtudiant:', err);
@@ -145,7 +151,7 @@ module.exports.getCoursEtudiant = (req, res) => {
 };
 
 
-    module.exports.updateCours = (req, res) => {
+module.exports.updateCours = (req, res) => {
         const { id } = req.params;
         const users_id = req.session.user.id;
         
@@ -183,7 +189,7 @@ module.exports.getCoursEtudiant = (req, res) => {
             console.log('✅ Cours mis à jour ID:', id, 'affectedRows:', result.affectedRows);
             res.json({ success: true, message: 'Cours mis à jour avec succès' });
         });
-    };
+};
 module.exports.getAllCours = (req, res) => {
     console.log('📊 API /cours-list appelée');
     
