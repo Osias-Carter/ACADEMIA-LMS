@@ -1,5 +1,13 @@
 const path = require('path');
 const db = require('../config/db');
+const multer = require('multer');
+// Config uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, 'public/uploads/cours/'),
+    filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+});
+const upload = multer({ storage });
+
 
 module.exports.showCours = (req, res) => {
     res.sendFile(path.join(__dirname, '../views/professeur/cours.html'));
@@ -29,58 +37,74 @@ module.exports.getNiveaux = (req, res) => {
     });
 };
 
-module.exports.cours = (req, res) => {
-    console.log("📤 Route de création des cours appelée:");
+module.exports.cours = [
+    upload.fields([
+        { name: 'urlvideo', maxCount: 1 },
+        { name: 'urlpdf', maxCount: 1 }
+    ]),
+    (req, res) => {
+        console.log("📤 Route de création des cours appelée (avec uploads):");
 
-    const { 
-        titre_cours, 
-        desc_cours, 
-        prix, 
-        duree_minutes, 
-        pre_requis, 
-        categories_id, 
-        niveau_id
-    } = req.body;
+        const { 
+            titre_cours, 
+            desc_cours, 
+            prix, 
+            duree_minutes, 
+            pre_requis, 
+            categories_id, 
+            niveau_id,
+            contenu_texte  // ← NOUVEAU
+        } = req.body;
 
-    if (!req.session.user || !req.session.user.id) {
-        return res.redirect('/user/login');
-    }
-    const users_id = req.session.user.id;
+        // Chemins fichiers uploadés
+        const urlvideo = req.files['urlvideo'] ? req.files['urlvideo'][0].path : '';
+        const urlpdf = req.files['urlpdf'] ? req.files['urlpdf'][0].path : '';
 
-    const checkSql = "SELECT id FROM cours WHERE titre_cours = ?";
-    db.query(checkSql, [titre_cours], (err, results) => {
-        if (err) {
-            console.error("❌ Erreur SQL check:", err);
-            return res.redirect('/professeur/cours?error=server_error');
-        }
+        const users_id = req.session.user.id;
 
-        if (results.length > 0) {
-            console.log("❌ Cours existe déjà:", titre_cours);
-            return res.redirect('/professeur/cours?error=cours_exists');
-        }
-
-        const insertSql = `
-            INSERT INTO cours (
-                titre_cours, desc_cours, prix, duree_minutes, 
-                date_publication, pre_requis, total_etudiants, 
-                note_moyenne, categories_id, niveau_id, users_id
-            ) VALUES (?, ?, ?, ?, NOW(), ?, 0, 0, ?, ?, ?)
-        `;
-
-        const values = [titre_cours, desc_cours, prix, duree_minutes, pre_requis, categories_id, niveau_id, users_id];
-        console.log("Insertion cours", values);
-
-        db.query(insertSql, values, (insertErr, result) => {
-            if (insertErr) {
-                console.error("❌ Erreur SQL insert:", insertErr.code, insertErr.message);
+        // Vérif doublon (inchangé)
+        const checkSql = "SELECT id FROM cours WHERE titre_cours = ?";
+        db.query(checkSql, [titre_cours], (err, results) => {
+            if (err) {
+                console.error("❌ Erreur SQL check:", err);
                 return res.redirect('/professeur/cours?error=server_error');
             }
+            if (results.length > 0) {
+                console.log("❌ Cours existe déjà:", titre_cours);
+                return res.redirect('/professeur/cours?error=cours_exists');
+            }
 
-            console.log("✅ Cours créé ID:", result.insertId);
-            return res.redirect('/dashboard?success=cours_created');
+            // ✅ INSERT AVEC FICHIERS
+            const insertSql = `
+                INSERT INTO cours (
+                    titre_cours, desc_cours, prix, duree_minutes,
+                    date_publication, pre_requis, total_etudiants, 
+                    note_moyenne, categories_id, niveau_id, users_id,
+                    urlvideo, urlpdf, contenu_texte
+                ) VALUES (?, ?, ?, ?, NOW(), ?, 0, 0, ?, ?, ?, ?, ?, ?)
+            `;
+
+            const values = [
+                titre_cours, desc_cours, prix, duree_minutes, 
+                pre_requis, categories_id, niveau_id, users_id,
+                urlvideo, urlpdf, contenu_texte
+            ];
+
+
+            console.log("Insertion cours + fichiers:", values);
+
+            db.query(insertSql, values, (insertErr, result) => {
+                if (insertErr) {
+                    console.error("❌ Erreur SQL insert:", insertErr.code, insertErr.message);
+                    return res.redirect('/professeur/cours?error=server_error');
+                }
+                console.log("✅ Cours créé ID:", result.insertId);
+                return res.redirect('/dashboard?success=cours_created');
+            });
         });
-    });
-};
+    }
+];
+
 
 module.exports.getCoursProf = (req, res) => {
     const users_id = req.session.user.id;
@@ -162,7 +186,10 @@ module.exports.updateCours = (req, res) => {
         duree_minutes, 
         pre_requis, 
         categories_id, 
-        niveau_id
+        niveau_id,
+        urlvideo,
+        urlpdf,
+        contenu_texte
     } = req.body;
 
         // Mettre à jour le cours
@@ -175,10 +202,13 @@ module.exports.updateCours = (req, res) => {
                 pre_requis = ?, 
                 categories_id = ?, 
                 niveau_id = ?
+                urlvideo = ?,
+                urlpdf = ?,
+                contenu_texte = ?
             WHERE id = ?
         `;
 
-        const values = [titre_cours, desc_cours, prix, duree_minutes, pre_requis, categories_id, niveau_id, id];
+        const values = [titre_cours, desc_cours, prix, duree_minutes, pre_requis, categories_id, niveau_id, urlvideo, urlpdf, contenu_texte, id];
 
         db.query(updateSql, values, (updateErr, result) => {
             if (updateErr) {

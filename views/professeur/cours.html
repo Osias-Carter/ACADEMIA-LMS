@@ -11,7 +11,7 @@
         <div class="cours_form">
             <h2>Ajouter un nouveau cours</h2>
             <div id="error-container"></div>
-            <form id="cours" action="/professeur/cours" method="post">
+            <form id="cours" action="/professeur/cours" method="post" enctype="multipart/form-data">
                 
                 <div class="input-group">
                     <label for="titre_cours">Titre du cours</label>
@@ -37,6 +37,10 @@
                     <label for="pre_requis">Pré-requis du cours</label>
                     <textarea id="pre_requis" name="pre_requis" required></textarea>
                 </div> 
+                <input type="file" name="urlvideo" accept="video/*">
+                <input type="file" name="urlpdf" accept=".pdf">
+                <textarea name="contenu_texte" placeholder="Texte du cours"></textarea>
+
 
                 <div class="input-group">
                     <label for="categories_id">Catégorie</label>
@@ -55,6 +59,7 @@
                         </select>
                     </div>
                 </div> 
+
 
                 <button type="submit" class="btn">Ajouter le cours</button>
             </form>
