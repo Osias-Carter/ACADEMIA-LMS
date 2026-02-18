@@ -1,6 +1,7 @@
 const path = require('path');
 const db = require('../config/db');
 const multer = require('multer');
+
 // Config uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'public/uploads/cours/'),
@@ -14,24 +15,24 @@ module.exports.showCours = (req, res) => {
 };
 
 module.exports.getCategories = (req, res) => {
-    console.log("Route getCategories appelée")
+    console.log("Route de récupération des categories  appelée")
     const sql = 'SELECT id, nom_cat, desc_cat FROM categories ORDER BY nom_cat';
     db.query(sql, (err, results) => {
         if (err) {
-            console.error('❌ Erreur catégories:', err);
-            return res.status(500).json({ success: false, message: 'Erreur BDD catégories' });
+            console.error(' Erreur  de récupération des catégories:', err);
+            return res.status(500).json({ success: false, message: 'Erreur  de récupération des catégories' });
         }
         res.json({ success: true, categories: results });
     });
 };
 
 module.exports.getNiveaux = (req, res) => {
-    console.log("Route getNiveaux appelée")
+    console.log("Route de récupération des niveaux  appelée")
     const sql = 'SELECT id, nom FROM niveau ORDER BY nom';
     db.query(sql, (err, results) => {
         if (err) {
-            console.error('❌ Erreur niveau:', err);
-            return res.status(500).json({ success: false, message: 'Erreur BDD niveau' });
+            console.error('Erreur de récupération des niveaux:', err);
+            return res.status(500).json({ success: false, message: 'Erreur de récupération des niveaux' });
         }
         res.json({ success: true, niveaux: results });
     });
@@ -43,7 +44,7 @@ module.exports.cours = [
         { name: 'urlpdf', maxCount: 1 }
     ]),
     (req, res) => {
-        console.log("📤 Route de création des cours appelée (avec uploads):");
+        console.log("Route de création des cours  appelée :");
 
         const { 
             titre_cours, 
@@ -62,15 +63,15 @@ module.exports.cours = [
 
         const users_id = req.session.user.id;
 
-        // Vérif doublon (inchangé)
+        // Vérif doublon 
         const checkSql = "SELECT id FROM cours WHERE titre_cours = ?";
         db.query(checkSql, [titre_cours], (err, results) => {
             if (err) {
-                console.error("❌ Erreur SQL check:", err);
+                console.error(" Erreur Serveur:", err);
                 return res.redirect('/professeur/cours?error=server_error');
             }
             if (results.length > 0) {
-                console.log("❌ Cours existe déjà:", titre_cours);
+                console.log("Ce cours existe déjà:", titre_cours);
                 return res.redirect('/professeur/cours?error=cours_exists');
             }
 
@@ -91,11 +92,11 @@ module.exports.cours = [
             ];
 
 
-            console.log("Insertion cours + fichiers:", values);
+            console.log("Insertion cours :", values);
 
             db.query(insertSql, values, (insertErr, result) => {
                 if (insertErr) {
-                    console.error("❌ Erreur SQL insert:", insertErr.code, insertErr.message);
+                    console.error(" Erreur de création du cours:", insertErr.code, insertErr.message);
                     return res.redirect('/professeur/cours?error=server_error');
                 }
                 console.log("✅ Cours créé ID:", result.insertId);
@@ -108,6 +109,7 @@ module.exports.cours = [
 
 module.exports.getCoursProf = (req, res) => {
     const users_id = req.session.user.id;
+    console.log("Route de récupération des cours par prof ")
 
     const sql = `
         SELECT 
@@ -129,12 +131,12 @@ module.exports.getCoursProf = (req, res) => {
     
     db.query(sql, [users_id], (err, results) => {
         if (err) {
-            console.error('❌ Erreur getCoursProf:', err);
+            console.error('Erreur de récupération des cours par prof:', err);
             return res.status(500).json({ success: false, message: 'Erreur BDD cours' });
         }
         
-        console.log('✅ Cours prof SQL:', results);
-        console.log('📋 Premier cours:', JSON.stringify(results[0], null, 2));
+        // console.log('✅ Cours prof SQL:', results);
+        // console.log('📋 Premier cours:', JSON.stringify(results[0], null, 2));
         
         res.json({ success: true, cours: results });
     });
@@ -142,7 +144,7 @@ module.exports.getCoursProf = (req, res) => {
 
 module.exports.getCoursEtudiant = (req, res) => {
     const users_id = req.session.user.id;
-
+    console.log("Route de récupération des cours par étudiant appellée ")
     const sql = `
         SELECT 
             i.id AS inscription_id,
@@ -163,12 +165,12 @@ module.exports.getCoursEtudiant = (req, res) => {
     // c.titre_cours,c.desc_cours,c.prix,c.pourcentage,c.note_moyenne,c.duree_minutes
     db.query(sql, [users_id], (err, results) => {
         if (err) {
-            console.error('❌ Erreur getCoursEtudiant:', err);
+            console.error(' Erreur de récupération des cours par étudiant:', err);
             return res.status(500).json({ success: false, message: 'Erreur BDD cours' });
         }
         
-        console.log('✅ Cours Etudiant SQL:', results);
-        console.log('📋 Premier cours:', JSON.stringify(results[0], null, 2));
+        // console.log('✅ Cours Etudiant SQL:', results);
+        // console.log('📋 Premier cours:', JSON.stringify(results[0], null, 2));
         
         res.json({ success: true, inscriptions: results });
     });
@@ -178,6 +180,7 @@ module.exports.getCoursEtudiant = (req, res) => {
 module.exports.updateCours = (req, res) => {
         const { id } = req.params;
         const users_id = req.session.user.id;
+        console.log("Route de mise à jour des cours appellée ")
         
         const { 
         titre_cours, 
@@ -212,16 +215,16 @@ module.exports.updateCours = (req, res) => {
 
         db.query(updateSql, values, (updateErr, result) => {
             if (updateErr) {
-                console.error('❌ Erreur update cours:', updateErr);
+                console.error(' Erreur de mise à jour du cours:', updateErr);
                 return res.status(500).json({ success: false, message: 'Erreur serveur' });
             }
 
-            console.log('✅ Cours mis à jour ID:', id, 'affectedRows:', result.affectedRows);
+            console.log('✅ Cours mis à jour ID:', id, 'Ligne affectée:', result.affectedRows);
             res.json({ success: true, message: 'Cours mis à jour avec succès' });
         });
 };
 module.exports.getAllCours = (req, res) => {
-    console.log('📊 API /cours-list appelée');
+    console.log('Route de récupération de tous les cours');
     
     const sql = `
         SELECT 
@@ -245,17 +248,38 @@ module.exports.getAllCours = (req, res) => {
     
     db.query(sql, (err, results) => {
         if (err) {
-            console.error('❌ Erreur getAllCours:', err);
-            return res.status(500).json({ success: false, message: 'Erreur BDD' });
+            console.error('Erreur de récupération des cours:', err);
+            return res.status(500).json({ success: false, message: 'Erreur de récupération des cours' });
         }
         console.log('✅ Cours trouvés:', results.length);
         res.json({ success: true, cours: results });
     });
 };
+module.exports.getSingleCours = (req, res) => {
+        console.log('Route de récupération d'+"un cours");
+        const sql = `
+        SELECT * FROM cours WHERE  id = ?`;
 
+        const { id } = req.params;
+        const users_id = req.session.user?.id;
+
+        db.query(sql, [users_id, id], (err, results) => {
+            if (err) {
+                console.error(' Erreurde récupération du cours:', err);
+                return res.status(500).json({ success: false, message: 'Erreur BDD' });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ success: false, message: 'Tchiaaa Cours non trouvé' });
+            }
+            console.log('✅ Cours trouvé:', results[0]);
+            res.json({ success: true, cours: results[0] });
+            res.redirect("/dashboard");
+
+        });
+};
 
 module.exports.inscriptionCours = (req, res) => {
-    console.log("📥 Inscription appelée", req.body);
+    console.log("Route d'inscription au cours");
     
     if (!req.session.user || !req.session.user.id) {
         return res.status(401).json({ success: false, message: 'Non connecté' });
@@ -272,7 +296,7 @@ module.exports.inscriptionCours = (req, res) => {
     const checkSql = `SELECT id FROM inscriptions WHERE users_id = ? AND cours_id = ?`;
     db.query(checkSql, [users_id, cours_id], (err, results) => {
         if (err) {
-            console.error('❌ Erreur check inscription:', err);
+            console.error(' Erreur BDD check inscription:', err);
             return res.status(500).json({ success: false, message: 'Erreur BDD' });
         }
         
@@ -285,11 +309,11 @@ module.exports.inscriptionCours = (req, res) => {
                           VALUES (NOW(), NULL, 0, ?, ?)`;
         db.query(insertSql, [users_id, cours_id], (err, result) => {
             if (err) {
-                console.error('❌ Erreur insert inscription:', err);
-                return res.status(500).json({ success: false, message: 'Erreur inscription' });
+                console.error('Erreur lors de l'+'inscription :', err);
+                return res.status(500).json({ success: false, message: 'Erreur lors de l'+'inscription ' });
             }
             console.log('✅ Inscrit:', users_id, '→ cours:', cours_id);
-            res.json({ success: true, message: 'Inscription réussie !' });
+            res.json({ success: true, message: 'Inscription au cours réussie !' });
         });
     });
 };
@@ -298,7 +322,8 @@ module.exports.inscriptionCours = (req, res) => {
 module.exports.deleteCours = (req, res) => {
     const { id } = req.params;
     const users_id = req.session.user?.id;
-    
+    console.log("Route de suppression des cours " )
+
     if (!users_id) return res.status(401).json({ success: false, message: 'Non connecté' });
 
     const checkSql = 'SELECT id FROM cours WHERE id = ? AND users_id = ?';
@@ -310,8 +335,8 @@ module.exports.deleteCours = (req, res) => {
         const deleteSql = 'DELETE FROM cours WHERE id = ?';
         db.query(deleteSql, [id], (deleteErr) => {
             if (deleteErr) {
-                console.error('❌ Erreur delete:', deleteErr);
-                return res.status(500).json({ success: false, message: 'Erreur serveur' });
+                console.error('Erreur de suppression du cours:', deleteErr);
+                return res.status(500).json({ success: false, message: 'Erreur de suppression du cours' });
             }
             res.status(204).send();
         });

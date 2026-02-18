@@ -5,6 +5,8 @@ const path = require('path');
 const router = Router();
 const viewsPath = path.join(__dirname, '..', 'views');
 
+console.log('🚀 Routes Auth chargées'); 
+
 // Pages
 router.get("/", (req, res) => {
     res.sendFile('home.html', { root: viewsPath });

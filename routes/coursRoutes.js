@@ -15,10 +15,10 @@ router.get('/dashboard', (req, res) => {
     res.sendFile('dashboard.html', { root: viewsPath });
 });
 
+router.get('/etudiant/cours/:id', coursController.getSingleCours);
 router.get('/cours-list', coursController.getAllCours);           
 router.get('/professeur/cours-list', coursController.getCoursProf);  
 router.get('/etudiant/cours-list', coursController.getCoursEtudiant);
-// API CRUD
 router.post('/etudiant/inscription', coursController.inscriptionCours);
 router.post('/professeur/cours', coursController.cours);
 router.delete('/cours/:id', coursController.deleteCours);

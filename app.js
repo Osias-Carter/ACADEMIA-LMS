@@ -5,7 +5,6 @@ const session = require('express-session');
 
 const authRoutes = require('./routes/authRoutes');
 const coursRoutes = require('./routes/coursRoutes'); 
-const quizRoutes = require('./routes/quizRoutes');
 
 
 const app = express();
@@ -33,7 +32,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes existantes
 app.use('/', authRoutes);
 app.use('/', coursRoutes);
-app.use('/', quizRoutes);
 
 
 module.exports = app;

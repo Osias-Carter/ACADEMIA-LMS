@@ -22,16 +22,37 @@
 
     <main class="main-content">
         <!-- Dashboard Étudiant ✅ -->
-        <section class="tab-content" id="dash-etudiant" style="display:none;">
+        <section class="tab-content" id="dash-etudiant">
             <div class="header">
                 <h2><i class="fas fa-tachometer-alt"></i> Dashboard Étudiant</h2>
             </div>
+            
             <div class="stats-section">
                 <h3>Vos statistiques</h3>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-book"></i></div><h4>Cours Actifs</h4><p id="cours-actifs">12</p></div>
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-clock"></i></div><h4>Heures Complétées</h4><p>45h</p></div>
-                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-star"></i></div><h4>Moyenne</h4><p>4.8/5</p></div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-book"></i></div>
+                        <div class="stat-info">
+                            <h4>Cours Actifs</h4>
+                            <p id="cours-actifs">12</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h4>Heures Complétées</h4>
+                            <p>45h</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-star"></i></div>
+                        <div class="stat-info">
+                            <h4>Moyenne</h4>
+                            <p>4.8/5</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -144,7 +165,7 @@
                     return;
                 }
             } catch (error) {
-                console.error('❌ Erreur fetch user:', error);
+                console.error(' Erreur fetch user:', error);
                 window.location.href = '/user/login';
                 return;
             }
@@ -213,11 +234,11 @@
                                 await fetchCoursEtudiant();
                             }
                         } else {
-                            alert('❌ ' + (data.message || 'Erreur inscription'));
+                            alert(' ' + (data.message || 'Erreur inscription'));
                         }
                     } catch (error) {
-                        console.error('❌ Erreur inscription:', error);
-                        alert('❌ Erreur réseau');
+                        console.error(' Erreur inscription:', error);
+                        alert(' Erreur réseau');
                     }
                 });
             });
@@ -242,11 +263,35 @@
                             throw new Error('Erreur serveur');
                         }
                     } catch (error) {
-                        alert('❌ Erreur suppression');
+                        alert(' Erreur suppression');
                     }
                 });
             });
 
+            //contenu du cours
+            document.querySelectorAll('.btn-small').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const coursId = e.currentTarget.dataset.id;
+                     try {
+                        const response = await fetch(`etudiant/cours/${coursId}`, {
+                            method: 'GET',
+                            credentials: 'include'
+                        });
+                        console.log('Response:', response);
+
+                        if (response.ok || response.status === 204) {
+                            alert('✅ Cours consulté !');
+                        } else {
+                            throw new Error('Erreur serveur');
+                        }
+                    } catch (error) {
+                        alert(' Erreur consultation');
+                        console.log(' Erreur consultation:', error);
+                    }
+                    
+                        
+                });
+            });
             // 3. MODIFIER (prof)
             document.querySelectorAll('.btn-edit').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -259,8 +304,7 @@
                 });
             });
                     
-            //     })
-            // })
+      
         }
 
         // 📚 Fetch cours prof
@@ -277,7 +321,7 @@
                 allProfCourses = data.cours;
                 renderProfCourses(allProfCourses, container);
             } catch (e) {
-                console.error('❌ fetchCoursProf:', e);
+                console.error(' fetchCoursProf:', e);
                 document.getElementById('liste').innerHTML = '<p class="no-data">Erreur chargement.</p>';
             }
         }
@@ -296,7 +340,7 @@
                 allEtudiantCourses = data.inscriptions;
                 renderEtudiantCourses(allEtudiantCourses, container);
             } catch (e) {
-                console.error('❌ fetchCoursEtudiant:', e);
+                console.error(' fetchCoursEtudiant:', e);
                 document.getElementById('liste-etudiant').innerHTML = '<p class="no-data">Erreur chargement.</p>';
             }
 
@@ -318,7 +362,7 @@
                 renderExplorerCourses(allExplorerCourses, explorerContainer);
                               
             } catch (e) {
-                console.error('❌ fetchCours:', e);
+                console.error(' fetchCours:', e);
             }
         }
         // 🎨 Render prof courses
@@ -384,15 +428,16 @@
                         <span>Progression: ${cours.pourcentage_progression ?? 0}%</span>
                         <span>Note: ${cours.note_moyenne ?? 0}/5</span>
                     </div>
-                    <div class="actions">
-                        <a href="/etudiant/cours/${cours.id}" class="btn-small">
+                        <button class="btn-small" data-id="${cours.id}">
                             <i class="fas fa-play-circle"></i> Continuer le cours
-                        </a>
-                    </div>
+                        </button>
+                       
                 `;
                 grid.appendChild(card);
             });
             container.appendChild(grid);
+            courseActions(); // ✅ Réattacher les event listeners
+
         }
 
         //Update du user
@@ -437,11 +482,11 @@
             showUserInfo(currentUser);
             toggleEditProfile(false);
         } else {
-            alert('❌ Erreur: ' + data.message);
+            alert(' Erreur: ' + data.message);
         }
     } catch (error) {
         console.error('Erreur:', error);
-        alert('❌ Erreur réseau ou réponse serveur invalide');
+        alert(' Erreur réseau ou réponse serveur invalide');
     }
 });
 

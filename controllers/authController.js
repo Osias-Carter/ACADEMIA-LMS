@@ -213,7 +213,7 @@ module.exports.updateUser = (req, res) => {
     const sql = "UPDATE users SET nom = ?, prenom = ?, tel = ? WHERE id = ?";
     db.query(sql, [nom, prenom, tel, userId], (err, result) => {
         if (err) {
-            console.error("❌ Erreur update user:", err);
+            console.error(" Erreur update user:", err);
             return res.status(500).json({ success: false, message: "Erreur serveur" });
         }
         
