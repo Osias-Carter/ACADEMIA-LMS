@@ -3,6 +3,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 
+
 const authRoutes = require('./routes/authRoutes');
 const coursRoutes = require('./routes/coursRoutes'); 
 

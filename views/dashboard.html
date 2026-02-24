@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/stylesheets/dashboard.css">
+
 </head>
 <body>
     <aside class="sidebar" id="sidebar">
@@ -584,6 +585,7 @@
                 try {
                     const response = await fetch('/user/logout', { method: 'POST', credentials: 'include' });
                     if (response.ok) {
+                        
                         alert('Déconnexion réussie');
                         window.location.href = '/user/login';
                     }
@@ -621,6 +623,15 @@
         }
 
         document.addEventListener('DOMContentLoaded', fetchUserData);
+
+        window.onpageshow = function(event) {
+
+            if (event.persisted) {
+
+                window.location.reload(); 
+
+            }
+        }
     </script>
 </body>
 </html>
